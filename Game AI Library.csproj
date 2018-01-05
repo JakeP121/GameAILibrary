@@ -81,6 +81,9 @@
     <Compile Include="Assets\Scripts\Agent.cs" />
     <Compile Include="Assets\Scripts\LookAtTarget.cs" />
     <Compile Include="Assets\Scripts\MoveToTarget.cs" />
+    <Compile Include="Assets\Scripts\Path Following\Path.cs" />
+    <Compile Include="Assets\Scripts\Path Following\PathFollower.cs" />
+    <Compile Include="Assets\Scripts\Path Following\PathNode.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
