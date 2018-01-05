@@ -25,8 +25,15 @@ public class PathFollower : Agent {
             Debug.Log("Path follower error: loop and loopBackwards cannot both be true!");
             UnityEditor.EditorApplication.isPlaying = false;
         }
+
+        if (startAtClosest) // If the agent should start at the closest node as opposed to the first node.
+            currentNode = findClosestNode(); // Set the current node to the closest one
     }
 
+    /// <summary>
+    /// Points to the current node in the path.
+    /// </summary>
+    /// <returns>A direction vector pointing to currentNode.</returns>
     protected override Vector3 GetDirectionVector()
     {
         // If at the end of the path
@@ -79,8 +86,32 @@ public class PathFollower : Agent {
             return new Vector3(); // Stop
         }
 
-        direction.Normalize();
-
+        direction.Normalize(); // Return normalised direction vector
         return direction;
+    }
+
+
+    /// <summary>
+    /// Finds the node closest to the agent's position.
+    /// </summary>
+    /// <returns>The index location of the closest node in the path's node array list.</returns>
+    private int findClosestNode()
+    {
+        int closestNode = -1;
+        float distanceToClosest = Mathf.Infinity;
+
+        for (int i = 0; i < path.nodes.Count; i++)
+        {
+            Vector3 direction = path.nodes[i].transform.position - transform.position;
+            float distance = direction.magnitude;
+
+            if (distance < distanceToClosest)
+            {
+                distanceToClosest = distance;
+                closestNode = i;
+            }
+        }
+
+        return closestNode;
     }
 }

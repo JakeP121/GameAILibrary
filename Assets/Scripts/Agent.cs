@@ -35,7 +35,7 @@ public class Agent : MonoBehaviour {
 
 
     /// <summary>
-    /// Returns an empty Vector3, designed to be overriden in child classes.
+    /// Returns direction vector 3
     /// </summary>
     /// <returns>A normalised direction vector3 to tell the agent where to move to</returns>
     protected virtual Vector3 GetDirectionVector() { return new Vector3(); }
