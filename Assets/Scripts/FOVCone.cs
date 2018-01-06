@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class FOVCone : MonoBehaviour {
     public bool visible;
-    public float sightDistance = 10.0f;
-    public float sightAngle = 100.0f;
+    public float viewDistance = 10.0f;
+    [Range(0, 360)] public float viewAngle = 100.0f;
 
     public bool enemyInSight = false;
 
