@@ -22,7 +22,7 @@ public class PathFollower : Agent {
         // Return error and stop application from running if both loop and loopBackwards are true
         if (loop && loopBackwards)
         {
-            Debug.Log("Path follower error: loop and loopBackwards cannot both be true!");
+            Debug.LogError("Path follower error: loop and loopBackwards cannot both be true!");
             UnityEditor.EditorApplication.isPlaying = false;
         }
 
