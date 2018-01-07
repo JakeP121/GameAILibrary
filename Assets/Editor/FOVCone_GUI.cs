@@ -14,7 +14,7 @@ public class FOVCone_GUI : Editor {
     private void OnSceneGUI()
     {
         FOVCone cone = (FOVCone)target; // Agent's FOV cone in game 
-        Handles.color = Color.green; // Change colour to green
+        Handles.color = Color.white; // Change colour to white
 
 
         // View distance
@@ -33,7 +33,5 @@ public class FOVCone_GUI : Editor {
         // Draw a line from the agent's position, along the direction vectors until they intersect with the view distance.
         Handles.DrawLine(cone.transform.position, cone.transform.position + rightSightPoint * cone.viewDistance);
         Handles.DrawLine(cone.transform.position, cone.transform.position + leftSightPoint * cone.viewDistance);
-
-
     }
 }

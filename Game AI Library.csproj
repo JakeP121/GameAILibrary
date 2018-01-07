@@ -78,6 +78,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\A Star\MapGrid.cs" />
+    <Compile Include="Assets\Scripts\A Star\MapTile.cs" />
     <Compile Include="Assets\Scripts\Agent.cs" />
     <Compile Include="Assets\Scripts\FOVCone.cs" />
     <Compile Include="Assets\Scripts\LookAtTarget.cs" />
