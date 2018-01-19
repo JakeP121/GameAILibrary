@@ -59,20 +59,32 @@ public class MapGrid : MonoBehaviour {
     /// </summary>
     /// <param name="position">A vector3 world position</param>
     /// <returns>The corresponding mapTile at position</returns>
-    public MapTile getNodeFromPosition(Vector3 position)
+    public MapTile getTileFromPosition(Vector3 position)
+    {
+        Vector2 coord = getCoordFromPosition(position);
+
+        // Return tile from array
+        return tiles[(int)coord.x, (int)coord.y];
+    }
+
+    /// <summary>
+    /// Converts a vector 3 world position into a vector2 grid coordinate
+    /// </summary>
+    /// <param name="position">Vector 3 world position</param>
+    /// <returns>Vector 2 grid coordinate</returns>
+    public Vector2 getCoordFromPosition(Vector3 position)
     {
         Vector2 mapPercentage; // Convert the position to a percentage across the available map (clamped between 0% and 100%).
-        mapPercentage.x = Mathf.Clamp01( (position.x + gridWorldSize.x / 2) / gridWorldSize.x );
-        mapPercentage.y = Mathf.Clamp01( (position.z + gridWorldSize.y / 2) / gridWorldSize.y );
+        mapPercentage.x = Mathf.Clamp01((position.x + gridWorldSize.x / 2) / gridWorldSize.x);
+        mapPercentage.y = Mathf.Clamp01((position.z + gridWorldSize.y / 2) / gridWorldSize.y);
 
-        // Advance across tiles array for percentage, then round down to closest tile
+        // Advance across tiles array for percentage, then round to closest tile
         int xTile = Mathf.RoundToInt((tileCountX - 1) * mapPercentage.x);
         int yTile = Mathf.RoundToInt((tileCountY - 1) * mapPercentage.y);
 
         //        0%=================100%
         // Array [0] [1] [2] [3] [4] [5]
 
-        // Return tile from array
-        return tiles[xTile, yTile];
+        return new Vector2(xTile, yTile);
     }
 }
