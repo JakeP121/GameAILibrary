@@ -8,16 +8,19 @@ public class AStarSearch : MonoBehaviour {
     public Agent target;
 
     public Path path;
-
+    public PathNode nodeType;
 
     MapTile start;
     MapTile end;
     LocalTile[,] tileData;
 
+
+
 	// Use this for initialization
 	void Start () {
-		
-	}
+        path = gameObject.AddComponent<Path>();
+        
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -45,6 +48,8 @@ public class AStarSearch : MonoBehaviour {
 
                 tileData[x, y] = new LocalTile(map.tiles[x,y]);
                 tileData[x, y].heuristic = distance.magnitude;
+                tileData[x, y].pathNode = Instantiate(nodeType);
+                tileData[x, y].pathNode.transform.position = tileData[x, y].tile.position;
             }
         }
     }
@@ -127,12 +132,11 @@ public class AStarSearch : MonoBehaviour {
     void createPath()
     {
         LocalTile currentNode = tileData[(int)map.getCoordFromPosition(end.position).x, (int)map.getCoordFromPosition(end.position).y];
-        path = gameObject.AddComponent<Path>();
-
+        path.nodes.Clear();
         while (currentNode.tile != start)
         {
             path.nodes.Add(currentNode.pathNode);
-         
+            
             currentNode = currentNode.previousTile;
         }
 

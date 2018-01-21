@@ -4,6 +4,5 @@ using UnityEngine;
 
 public class Path : MonoBehaviour {
 
-    public List<PathNode> nodes;
-    
+    public List<PathNode> nodes = new List<PathNode>();
 }

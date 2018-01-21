@@ -17,8 +17,6 @@ class LocalTile
 
     public LocalTile(MapTile tile)
     {
-        pathNode = new PathNode();
-
         this.tile = tile;
     }
         
