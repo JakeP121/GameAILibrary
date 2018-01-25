@@ -36,20 +36,21 @@ public class AStarSearch : MonoBehaviour {
         if (start == map.getTileFromPosition(transform.position) && target.transform.position == targetPos) // Exit early if agent and target hasn't moved
             return;
 
-        start = map.getTileFromPosition(transform.position);
-
-        if (targetPos != target.transform.position) // If target has moved, recalculate heuristics and edit end
+        if (targetPos != target.transform.position) // If target has moved
         {
-            targetPos = target.transform.position;
-            resetTiles();
-            end = calculateHeuristics();
+            targetPos = target.transform.position; // Set new target location
+            resetTiles();                          // Reset tile values
+            end = calculateHeuristics();           // Set end to the closest tile
+            search();
         }
+
+        start = map.getTileFromPosition(transform.position); // Set new start location
 
         if (start == end) // If the agent is already at the target's position
             return;
 
-        search();
-	}
+        createPath();
+    }
 
     /// <summary>
     /// Calculates the heuristic values for all tiles
@@ -203,16 +204,21 @@ public class AStarSearch : MonoBehaviour {
     /// </summary>
     void createPath()
     {
-        LocalTile currentNode = tileData[(int)map.getCoordFromPosition(end.position).x, (int)map.getCoordFromPosition(end.position).y];
+        LocalTile currentTile = tileData[(int)map.getCoordFromPosition(end.position).x, (int)map.getCoordFromPosition(end.position).y];
 
         path.nodes.Clear();
 
-        while (currentNode.tile != start)
+        if (currentTile.previousTile == null) // Return early if tiles haven't been searched
+            return;
+
+        while (currentTile.tile != start)
         {
-            path.nodes.Add(currentNode.pathNode);
-            
-            currentNode = currentNode.previousTile;
+            path.nodes.Add(currentTile.pathNode);
+
+            currentTile = currentTile.previousTile;
         }
+
+        path.nodes.RemoveAt(path.nodes.Count - 1);
 
         path.nodes.Reverse();
     }
