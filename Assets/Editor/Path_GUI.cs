@@ -23,6 +23,7 @@ public class Path_GUI : Editor {
         {
             Handles.SphereHandleCap(i, path.nodes[i].transform.position, Quaternion.Euler(0.0f, 0.0f, 0.0f), nodeSize, EventType.Repaint); // Draw sphere
             Handles.DrawLine(path.nodes[i].transform.position, path.nodes[i + 1].transform.position); // Draw a line from this node to the next one
+         
         }
 
         Handles.SphereHandleCap(path.nodes.Count, path.nodes[path.nodes.Count - 1].transform.position, Quaternion.Euler(0.0f, 0.0f, 0.0f), nodeSize, EventType.Repaint); // Draw sphere

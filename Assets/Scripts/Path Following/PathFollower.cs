@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PathFollower : Agent {
     public Path path; // The path the agent should follow.
-    public bool loop = true; // Should the agent return to the start and begin again after completion.
+    public bool loop = false; // Should the agent return to the start and begin again after completion.
     public bool loopBackwards = false; // Should the agent turn around and follow the trail backwards after completion.
-    public bool startAtClosest; // Should the agent start at the closest node, as opposed to the first node.
+    public bool startAtClosest = false; // Should the agent start at the closest node, as opposed to the first node.
     public float waitAtNode = 0.0f; // How long the agent will wait at each node before moving on.
 
     private int currentNode = 0; // The current node the agent is moving to or stopped at.
@@ -14,11 +14,12 @@ public class PathFollower : Agent {
     private bool waiting = false; // If the agent is stopped at a node.
     private float waitTime = 0.0f; // How long the agent has been stopped for.
 
-    // Start out simple, go from start to end.
-    // Then start from closest node and go to end.
 
     private void Start()
     {
+        if (path == null)
+            path = gameObject.GetComponent<Path>();
+        
         // Return error and stop application from running if both loop and loopBackwards are true
         if (loop && loopBackwards)
         {
@@ -28,6 +29,14 @@ public class PathFollower : Agent {
 
         if (startAtClosest) // If the agent should start at the closest node as opposed to the first node.
             currentNode = findClosestNode(); // Set the current node to the closest one
+    }
+
+    private new void Update()
+    {
+        if (path == null)
+            path = gameObject.GetComponent<Path>();
+
+        base.Update();
     }
 
     /// <summary>
@@ -94,9 +103,12 @@ public class PathFollower : Agent {
     /// <summary>
     /// Finds the node closest to the agent's position.
     /// </summary>
-    /// <returns>The index location of the closest node in the path's node array list.</returns>
+    /// <returns>The index location of the closest node in the path's node array list or 0 if no path.</returns>
     private int findClosestNode()
     {
+        if (path == null)
+            return 0;
+
         int closestNode = -1;
         float distanceToClosest = Mathf.Infinity;
 
