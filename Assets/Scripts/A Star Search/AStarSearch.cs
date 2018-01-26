@@ -66,7 +66,7 @@ public class AStarSearch : MonoBehaviour {
     MapTile calculateHeuristics()
     {
         float lowestHeuristic = Mathf.Infinity; // Lowest heuristic cost for each heuristic to be tested againts (start high to ensure an initial value is found)
-        Vector2 closestTile = new Vector2(); // The grid coordinates of the tile
+        iVector2 closestTile = new iVector2(); // The grid coordinates of the tile
 
         for (int x = 0; x < mapGrid.tiles.GetLength(0); x++) // Loop through mapGrid
         {
@@ -85,7 +85,7 @@ public class AStarSearch : MonoBehaviour {
             }
         }
 
-        return mapGrid.tiles[(int)closestTile.x, (int)closestTile.y]; // Return the mapGrid tile with the lowest heuristic
+        return mapGrid.tiles[closestTile.x, closestTile.y]; // Return the mapGrid tile with the lowest heuristic
     }
 
     /// <summary>
@@ -101,21 +101,21 @@ public class AStarSearch : MonoBehaviour {
         {
             currentTile.visited = true; // Mark tile as visited
 
-            Vector2 coord = mapGrid.getCoordFromPosition(currentTile.tile.position); // Remember grid coord of tile (to easily reference neighbours)
+            iVector2 coord = mapGrid.getCoordFromPosition(currentTile.tile.position); // Remember grid coord of tile (to easily reference neighbours)
 
             List<LocalTile> neighbours = new List<LocalTile>(); // Create a new list of its neighbours
 
             if (coord.x > 0) // Current tile isn't on left border
-                neighbours.Add(tileData[(int)coord.x - 1, (int)coord.y]);
+                neighbours.Add(tileData[coord.x - 1, coord.y]);
 
             if (coord.x < mapGrid.tiles.GetLength(0) - 1) // Current tile isn't on right border
-                neighbours.Add(tileData[(int)coord.x + 1, (int)coord.y]);
+                neighbours.Add(tileData[coord.x + 1, coord.y]);
 
             if (coord.y > 0) // Current tile isn't on bottom border
-                neighbours.Add(tileData[(int)coord.x, (int)coord.y - 1]);
+                neighbours.Add(tileData[coord.x, coord.y - 1]);
 
             if (coord.y < mapGrid.tiles.GetLength(1) - 1) // Current tile isn't on top border
-                neighbours.Add(tileData[(int)coord.x, (int)coord.y + 1]);
+                neighbours.Add(tileData[coord.x, coord.y + 1]);
 
             for (int i = 0; i < neighbours.Count; i++) // Loop through neighbours
             {
@@ -161,7 +161,7 @@ public class AStarSearch : MonoBehaviour {
     /// <returns>The closest walkable neighbour of this tile</returns>
     MapTile findWalkableNeighbour(MapTile tile)
     {
-        Vector2 closestNeighbour = new Vector2(0, 0);
+        iVector2 closestNeighbour = new iVector2();
         float lowestHeuristic = Mathf.Infinity;
 
         // Loop through tileData and remember the walkable node with the lowest heuristic
@@ -178,7 +178,7 @@ public class AStarSearch : MonoBehaviour {
             }
         }
 
-        return mapGrid.tiles[(int)closestNeighbour.x, (int)closestNeighbour.y];
+        return mapGrid.tiles[closestNeighbour.x, closestNeighbour.y];
     }
 
     /// <summary>
@@ -186,7 +186,7 @@ public class AStarSearch : MonoBehaviour {
     /// </summary>
     void createPath()
     {
-        LocalTile currentTile = tileData[(int)mapGrid.getCoordFromPosition(end.position).x, (int)mapGrid.getCoordFromPosition(end.position).y]; // Start at the end
+        LocalTile currentTile = tileData[mapGrid.getCoordFromPosition(end.position).x, mapGrid.getCoordFromPosition(end.position).y]; // Start at the end
 
         path.nodes.Clear(); // Clear any old path
 

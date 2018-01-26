@@ -61,10 +61,10 @@ public class MapGrid : MonoBehaviour {
     /// <returns>The corresponding mapTile at position</returns>
     public MapTile getTileFromPosition(Vector3 position)
     {
-        Vector2 coord = getCoordFromPosition(position);
+        iVector2 coord = getCoordFromPosition(position);
 
         // Return tile from array
-        return tiles[(int)coord.x, (int)coord.y];
+        return tiles[coord.x, coord.y];
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ public class MapGrid : MonoBehaviour {
     /// </summary>
     /// <param name="position">Vector 3 world position</param>
     /// <returns>Vector 2 grid coordinate</returns>
-    public Vector2 getCoordFromPosition(Vector3 position)
+    public iVector2 getCoordFromPosition(Vector3 position)
     {
         Vector2 mapPercentage; // Convert the position to a percentage across the available map (clamped between 0% and 100%).
         mapPercentage.x = Mathf.Clamp01((position.x + gridWorldSize.x / 2) / gridWorldSize.x);
