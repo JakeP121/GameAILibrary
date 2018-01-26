@@ -78,10 +78,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\A Star\AStarSearch.cs" />
-    <Compile Include="Assets\Scripts\A Star\LocalTile.cs" />
-    <Compile Include="Assets\Scripts\A Star\MapGrid.cs" />
-    <Compile Include="Assets\Scripts\A Star\MapTile.cs" />
+    <Compile Include="Assets\Data Types\iVector2.cs" />
+    <Compile Include="Assets\Scripts\A Star Search\AStarSearch.cs" />
+    <Compile Include="Assets\Scripts\A Star Search\Map Grid and Tiles\LocalTile.cs" />
+    <Compile Include="Assets\Scripts\A Star Search\Map Grid and Tiles\MapGrid.cs" />
+    <Compile Include="Assets\Scripts\A Star Search\Map Grid and Tiles\MapTile.cs" />
     <Compile Include="Assets\Scripts\Agent.cs" />
     <Compile Include="Assets\Scripts\FOVCone.cs" />
     <Compile Include="Assets\Scripts\LookAtTarget.cs" />
