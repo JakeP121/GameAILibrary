@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AStarSearch : MonoBehaviour {
-    public MapGrid map;
+    public MapGrid mapGrid;
     public Agent target;
     private Vector3 targetPos;
 
+    [HideInInspector]
     public Path path;
-    public PathNode nodeType;
 
     private MapTile start;
     private MapTile end;
@@ -18,14 +18,14 @@ public class AStarSearch : MonoBehaviour {
 	void Start () {
         path = gameObject.AddComponent<Path>();
 
-        tileData = new LocalTile[map.tiles.GetLength(0), map.tiles.GetLength(1)];
+        tileData = new LocalTile[mapGrid.tiles.GetLength(0), mapGrid.tiles.GetLength(1)];
 
-        for (int x = 0; x < map.tiles.GetLength(0); x++)
+        for (int x = 0; x < mapGrid.tiles.GetLength(0); x++)
         {
-            for (int y = 0; y < map.tiles.GetLength(1); y++)
+            for (int y = 0; y < mapGrid.tiles.GetLength(1); y++)
             {
-                tileData[x, y] = new LocalTile(map.tiles[x, y]);
-                tileData[x, y].pathNode = Instantiate(nodeType);
+                tileData[x, y] = new LocalTile(mapGrid.tiles[x, y]);
+                tileData[x, y].pathNode = Instantiate(Resources.Load<PathNode>("PathNode"));
                 tileData[x, y].pathNode.transform.position = tileData[x, y].tile.position;
             }
         }
@@ -33,8 +33,10 @@ public class AStarSearch : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (start == map.getTileFromPosition(transform.position) && target.transform.position == targetPos) // Exit early if agent and target hasn't moved
+        if (start == mapGrid.getTileFromPosition(transform.position) && target.transform.position == targetPos) // Exit early if agent and target hasn't moved
             return;
+
+        start = mapGrid.getTileFromPosition(transform.position); // Set new start location
 
         if (targetPos != target.transform.position) // If target has moved
         {
@@ -44,11 +46,9 @@ public class AStarSearch : MonoBehaviour {
             search();
         }
 
-        start = map.getTileFromPosition(transform.position); // Set new start location
-
         if (start == end) // If the agent is already at the target's position
             return;
-
+        
         createPath();
     }
 
@@ -61,11 +61,11 @@ public class AStarSearch : MonoBehaviour {
         float lowestHeuristic = Mathf.Infinity;
         Vector2 closestTile = new Vector2();
 
-        for (int x = 0; x < map.tiles.GetLength(0); x++)
+        for (int x = 0; x < mapGrid.tiles.GetLength(0); x++)
         {
-            for (int y = 0; y < map.tiles.GetLength(1); y++)
+            for (int y = 0; y < mapGrid.tiles.GetLength(1); y++)
             {
-                Vector3 distance = targetPos - map.tiles[x, y].position;
+                Vector3 distance = targetPos - mapGrid.tiles[x, y].position;
 
                 tileData[x, y].heuristic = distance.magnitude;
 
@@ -78,7 +78,7 @@ public class AStarSearch : MonoBehaviour {
             }
         }
 
-        return map.tiles[(int)closestTile.x, (int)closestTile.y];
+        return mapGrid.tiles[(int)closestTile.x, (int)closestTile.y];
     }
 
     /// <summary>
@@ -89,7 +89,7 @@ public class AStarSearch : MonoBehaviour {
         List<LocalTile> fringe = new List<LocalTile>();
         List<LocalTile> visited = new List<LocalTile>();
 
-        Vector2 startingCoord = map.getCoordFromPosition(start.position);
+        Vector2 startingCoord = mapGrid.getCoordFromPosition(start.position);
 
         LocalTile currentTile = tileData[(int)startingCoord.x, (int)startingCoord.y];
 
@@ -109,25 +109,25 @@ public class AStarSearch : MonoBehaviour {
             visited.Add(currentTile);
             currentTile.visited = true;
 
-            Vector2 coord = map.getCoordFromPosition(currentTile.tile.position);
+            Vector2 coord = mapGrid.getCoordFromPosition(currentTile.tile.position);
 
             List<MapTile> neighbours = new List<MapTile>();
 
             if (coord.x > 0) // Current tile isn't on left border
-                neighbours.Add(map.tiles[(int)coord.x - 1, (int)coord.y]);
+                neighbours.Add(mapGrid.tiles[(int)coord.x - 1, (int)coord.y]);
 
-            if (coord.x < map.tiles.GetLength(0) - 1) // Current tile isn't on right border
-                neighbours.Add(map.tiles[(int)coord.x + 1, (int)coord.y]);
+            if (coord.x < mapGrid.tiles.GetLength(0) - 1) // Current tile isn't on right border
+                neighbours.Add(mapGrid.tiles[(int)coord.x + 1, (int)coord.y]);
 
             if (coord.y > 0) // Current tile isn't on bottom border
-                neighbours.Add(map.tiles[(int)coord.x, (int)coord.y - 1]);
+                neighbours.Add(mapGrid.tiles[(int)coord.x, (int)coord.y - 1]);
 
-            if (coord.y < map.tiles.GetLength(1) - 1) // Current tile isn't on top border
-                neighbours.Add(map.tiles[(int)coord.x, (int)coord.y + 1]);
+            if (coord.y < mapGrid.tiles.GetLength(1) - 1) // Current tile isn't on top border
+                neighbours.Add(mapGrid.tiles[(int)coord.x, (int)coord.y + 1]);
 
             for (int i = 0; i < neighbours.Count; i++)
             {
-                LocalTile currentNeighbour = tileData[(int)map.getCoordFromPosition(neighbours[i].position).x, (int)map.getCoordFromPosition(neighbours[i].position).y];
+                LocalTile currentNeighbour = tileData[(int)mapGrid.getCoordFromPosition(neighbours[i].position).x, (int)mapGrid.getCoordFromPosition(neighbours[i].position).y];
 
                 if (currentNeighbour.visited == false && currentNeighbour.tile.walkable)
                 {
@@ -169,8 +169,6 @@ public class AStarSearch : MonoBehaviour {
         }
 
         visited.Add(currentTile);
-
-        createPath();
     }
 
     /// <summary>
@@ -183,9 +181,9 @@ public class AStarSearch : MonoBehaviour {
         Vector2 closestNeighbour = new Vector2(0, 0);
         float lowestHeuristic = Mathf.Infinity;
 
-        for (int x = 0; x < map.tiles.GetLength(0); x++)
+        for (int x = 0; x < mapGrid.tiles.GetLength(0); x++)
         {
-            for (int y = 0; y < map.tiles.GetLength(1); y++)
+            for (int y = 0; y < mapGrid.tiles.GetLength(1); y++)
             {
                 if (tileData[x,y].heuristic < lowestHeuristic && tileData[x,y].tile.walkable)
                 {
@@ -196,7 +194,7 @@ public class AStarSearch : MonoBehaviour {
             }
         }
 
-        return map.tiles[(int)closestNeighbour.x, (int)closestNeighbour.y];
+        return mapGrid.tiles[(int)closestNeighbour.x, (int)closestNeighbour.y];
     }
 
     /// <summary>
@@ -204,18 +202,17 @@ public class AStarSearch : MonoBehaviour {
     /// </summary>
     void createPath()
     {
-        LocalTile currentTile = tileData[(int)map.getCoordFromPosition(end.position).x, (int)map.getCoordFromPosition(end.position).y];
+        LocalTile currentTile = tileData[(int)mapGrid.getCoordFromPosition(end.position).x, (int)mapGrid.getCoordFromPosition(end.position).y];
 
         path.nodes.Clear();
-
-        if (currentTile.previousTile == null) // Return early if tiles haven't been searched
-            return;
 
         while (currentTile.tile != start)
         {
             path.nodes.Add(currentTile.pathNode);
 
             currentTile = currentTile.previousTile;
+            if (currentTile == null)
+                Debug.Log("meme");
         }
 
         path.nodes.RemoveAt(path.nodes.Count - 1);
@@ -228,9 +225,9 @@ public class AStarSearch : MonoBehaviour {
     /// </summary>
     void resetTiles()
     {
-        for (int x = 0; x < map.tiles.GetLength(0); x++)
+        for (int x = 0; x < mapGrid.tiles.GetLength(0); x++)
         {
-            for (int y = 0; y < map.tiles.GetLength(1); y++)
+            for (int y = 0; y < mapGrid.tiles.GetLength(1); y++)
             {
                 tileData[x, y].cost = 0;
                 tileData[x, y].heuristic = 0;
