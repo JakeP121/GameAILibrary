@@ -49,12 +49,13 @@ public class AStarSearch : MonoBehaviour {
             if (!end.walkable) // If the end isn't a walkable tile
                 end = findWalkableNeighbour(end); // Find the closest walkable tile
 
+            search();
         }
 
         if (start == end) // If the agent is already at the target's position, end
             return;
 
-        search(); 
+        
         createPath();
     }
 
@@ -102,61 +103,54 @@ public class AStarSearch : MonoBehaviour {
 
             Vector2 coord = mapGrid.getCoordFromPosition(currentTile.tile.position); // Remember grid coord of tile (to easily reference neighbours)
 
-            List<MapTile> neighbours = new List<MapTile>(); // Create a new list of its neighbours
+            List<LocalTile> neighbours = new List<LocalTile>(); // Create a new list of its neighbours
 
             if (coord.x > 0) // Current tile isn't on left border
-                neighbours.Add(mapGrid.tiles[(int)coord.x - 1, (int)coord.y]);
+                neighbours.Add(tileData[(int)coord.x - 1, (int)coord.y]);
 
             if (coord.x < mapGrid.tiles.GetLength(0) - 1) // Current tile isn't on right border
-                neighbours.Add(mapGrid.tiles[(int)coord.x + 1, (int)coord.y]);
+                neighbours.Add(tileData[(int)coord.x + 1, (int)coord.y]);
 
             if (coord.y > 0) // Current tile isn't on bottom border
-                neighbours.Add(mapGrid.tiles[(int)coord.x, (int)coord.y - 1]);
+                neighbours.Add(tileData[(int)coord.x, (int)coord.y - 1]);
 
             if (coord.y < mapGrid.tiles.GetLength(1) - 1) // Current tile isn't on top border
-                neighbours.Add(mapGrid.tiles[(int)coord.x, (int)coord.y + 1]);
+                neighbours.Add(tileData[(int)coord.x, (int)coord.y + 1]);
 
             for (int i = 0; i < neighbours.Count; i++) // Loop through neighbours
             {
-                LocalTile currentNeighbour = tileData[(int)mapGrid.getCoordFromPosition(neighbours[i].position).x, (int)mapGrid.getCoordFromPosition(neighbours[i].position).y];
+                LocalTile currentNeighbour = neighbours[i];
 
-                if (currentNeighbour.visited == false && currentNeighbour.tile.walkable)
+                if (currentNeighbour.visited == false && currentNeighbour.tile.walkable) // If current neighbour hasn't been visited AND is walkable
                 {
-                    if (currentNeighbour.cost == 0 || currentNeighbour.cost > currentTile.cost + 1)
+                    if (currentNeighbour.cost == 0 || currentNeighbour.cost > currentTile.cost + 1) // Check if a cost has not yet been established, or if the cost from this tile is cheaper
                     {
-                        currentNeighbour.cost = currentTile.cost + 1;
+                        currentNeighbour.cost = currentTile.cost + 1; // Set new cost and previousTile
                         currentNeighbour.previousTile = currentTile;
+
+                        if (!currentNeighbour.inFringe) // If this neighbour is not in fringe
+                        {
+                            fringe.Add(currentNeighbour); // Add it 
+                            currentNeighbour.inFringe = true;
+                        }
                     }
-
-                    bool alreadyInFringe = false;
-                    int j = 0;
-
-                    while (j < fringe.Count && !alreadyInFringe) 
-                    {
-                        if (fringe[j].tile == currentNeighbour.tile)
-                            alreadyInFringe = true;
-                        j++;
-                    } 
-
-                    if (!alreadyInFringe)
-                        fringe.Add(currentNeighbour);
                 }
             }
 
-            if (fringe.Count > 0)
+            if (fringe.Count == 0) // If fringe is empty, return early (to counter a possible infinite loop)
+                return;
+
+            // Find the next lowest costing node to move to next
+            int lowestMove = 0;
+            for (int i = 0; i < fringe.Count; i++)
             {
-                int lowestMove = 0;
-                for (int i = 0; i < fringe.Count; i++)
-                {
-                    if (fringe[i].heuristic + fringe[i].cost < fringe[lowestMove].heuristic + fringe[lowestMove].cost)
-                        lowestMove = i;
-                }
-
-                currentTile = fringe[lowestMove];
-                fringe.RemoveAt(lowestMove);
+                if (fringe[i].heuristic + fringe[i].cost < fringe[lowestMove].heuristic + fringe[lowestMove].cost)
+                    lowestMove = i;
             }
-            else
-                return; // Return if there is no further tiles to advance to (counter infinte loop).
+
+            currentTile = fringe[lowestMove];
+            fringe.RemoveAt(lowestMove);
+            currentTile.inFringe = false;
         }
     }
 
@@ -170,9 +164,10 @@ public class AStarSearch : MonoBehaviour {
         Vector2 closestNeighbour = new Vector2(0, 0);
         float lowestHeuristic = Mathf.Infinity;
 
-        for (int x = 0; x < mapGrid.tiles.GetLength(0); x++)
+        // Loop through tileData and remember the walkable node with the lowest heuristic
+        for (int x = 0; x < tileData.GetLength(0); x++)
         {
-            for (int y = 0; y < mapGrid.tiles.GetLength(1); y++)
+            for (int y = 0; y < tileData.GetLength(1); y++)
             {
                 if (tileData[x,y].heuristic < lowestHeuristic && tileData[x,y].tile.walkable)
                 {
@@ -191,21 +186,21 @@ public class AStarSearch : MonoBehaviour {
     /// </summary>
     void createPath()
     {
-        LocalTile currentTile = tileData[(int)mapGrid.getCoordFromPosition(end.position).x, (int)mapGrid.getCoordFromPosition(end.position).y];
-        float distance = (start.position - currentTile.tile.position).magnitude;
-        path.nodes.Clear();
+        LocalTile currentTile = tileData[(int)mapGrid.getCoordFromPosition(end.position).x, (int)mapGrid.getCoordFromPosition(end.position).y]; // Start at the end
 
-        while (distance > mapGrid.nodeSize)
+        path.nodes.Clear(); // Clear any old path
+
+        float distance = (start.position - currentTile.tile.position).magnitude; // Calculate the distance from the end to the start
+
+        while (distance > mapGrid.nodeSize) // While the distance is greater than the size of one node
         {
-            path.nodes.Add(currentTile.pathNode);
+            path.nodes.Add(currentTile.pathNode); // Add the currentTile to the path
 
-            currentTile = currentTile.previousTile;
-            distance = (start.position - currentTile.tile.position).magnitude;
+            currentTile = currentTile.previousTile; // Move backwards and set it as the next currentTile
+            distance = (start.position - currentTile.tile.position).magnitude; // Set the distance from the new currentTile to the start
         }
 
-        //path.nodes.RemoveAt(path.nodes.Count - 1);
-
-        path.nodes.Reverse();
+        path.nodes.Reverse(); // Flip the path so it goes from start to end
     }
 
     /// <summary>
@@ -213,14 +208,12 @@ public class AStarSearch : MonoBehaviour {
     /// </summary>
     void resetTiles()
     {
-        for (int x = 0; x < mapGrid.tiles.GetLength(0); x++)
+        // Loop through tileData array and revert the values
+        for (int x = 0; x < tileData.GetLength(0); x++)
         {
-            for (int y = 0; y < mapGrid.tiles.GetLength(1); y++)
+            for (int y = 0; y < tileData.GetLength(1); y++)
             {
-                tileData[x, y].cost = 0;
-                tileData[x, y].heuristic = 0;
-                tileData[x, y].visited = false;
-                tileData[x, y].previousTile = null;
+                tileData[x, y].reset();
             }
         }
     }

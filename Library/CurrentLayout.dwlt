@@ -135,7 +135,7 @@ MonoBehaviour:
   m_MinSize: {x: 879, y: 321}
   m_MaxSize: {x: 16004, y: 8021}
   vertical: 0
-  controlID: 104
+  controlID: 80
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -159,7 +159,7 @@ MonoBehaviour:
   m_MinSize: {x: 604, y: 321}
   m_MaxSize: {x: 12004, y: 8021}
   vertical: 1
-  controlID: 105
+  controlID: 81
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -467,21 +467,21 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: a8250000
     m_LastClickedID: 9640
-    m_ExpandedIDs: e6fbffff00000000
+    m_ExpandedIDs: e4fbffff00000000bc250000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: PathNode(Clone)
-      m_OriginalName: PathNode(Clone)
+      m_Name: 
+      m_OriginalName: 
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: -13880
+      m_UserData: 0
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 0
+      m_OriginalEventType: 11
       m_IsRenamingFilename: 0
       m_ClientGUIView: {fileID: 9}
     m_SearchString: 
