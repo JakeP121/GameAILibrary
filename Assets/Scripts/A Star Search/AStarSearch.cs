@@ -32,10 +32,11 @@ public class AStarSearch : MonoBehaviour {
             }
         }
     }
-	
-	// Update is called once per frame
-	void Update () {
-        if (start == mapGrid.getTileFromPosition(transform.position) && target.transform.position == targetPos) // Exit early if agent and target hasn't moved
+
+    // Update is called once per frame
+    void Update() {
+        // Exit early if agent and target hasn't moved, and the map hasn't changed
+        if (start == mapGrid.getTileFromPosition(transform.position) && target.transform.position == targetPos && (!mapGrid.dynamicEnviroment || !mapGrid.hasChanged()))
             return;
 
         start = mapGrid.getTileFromPosition(transform.position); // Set new start location
@@ -49,13 +50,22 @@ public class AStarSearch : MonoBehaviour {
             if (!end.walkable) // If the end isn't a walkable tile
                 end = findWalkableNeighbour(end); // Find the closest walkable tile
 
-            search();
+            if (!mapGrid.hasChanged() && start != end) // If the enviroment isn't dynamic and agent hasn't reached end
+                search(); // only search if the target has moved
         }
 
         if (start == end) // If the agent is already at the target's position, end
             return;
 
-        
+        if (mapGrid.dynamicEnviroment && mapGrid.hasChanged()) // If the map is dynamic and has changed
+        {
+            if (!end.walkable) // If the end isn't a walkable tile
+                end = findWalkableNeighbour(end); // Find the closest walkable tile
+
+            resetTilePath();
+            search();
+        } 
+
         createPath();
     }
 
@@ -95,7 +105,7 @@ public class AStarSearch : MonoBehaviour {
     {
         List<LocalTile> fringe = new List<LocalTile>(); // Stores possible next moves
 
-        LocalTile currentTile = tileData[(int)mapGrid.getCoordFromPosition(start.position).x, (int)mapGrid.getCoordFromPosition(start.position).y]; // Set current tile to start 
+        LocalTile currentTile = tileData[mapGrid.getCoordFromPosition(start.position).x, mapGrid.getCoordFromPosition(start.position).y]; // Set current tile to start 
 
         while (currentTile.tile != end) // While it hasn't reached the end tile
         {
@@ -121,7 +131,7 @@ public class AStarSearch : MonoBehaviour {
             {
                 LocalTile currentNeighbour = neighbours[i];
 
-                if (currentNeighbour.visited == false && currentNeighbour.tile.walkable) // If current neighbour hasn't been visited AND is walkable
+                if (!currentNeighbour.visited && currentNeighbour.tile.walkable) // If current neighbour hasn't been visited AND is walkable
                 {
                     if (currentNeighbour.cost == 0 || currentNeighbour.cost > currentTile.cost + 1) // Check if a cost has not yet been established, or if the cost from this tile is cheaper
                     {
@@ -214,6 +224,24 @@ public class AStarSearch : MonoBehaviour {
             for (int y = 0; y < tileData.GetLength(1); y++)
             {
                 tileData[x, y].reset();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Resets cost, previousTile, visited and inFringe variables of each tile, but not heuristics
+    /// </summary>
+    void resetTilePath()
+    {
+        // Loop through tileData array and revert the values
+        for (int x = 0; x < tileData.GetLength(0); x++)
+        {
+            for (int y = 0; y < tileData.GetLength(1); y++)
+            {
+                tileData[x, y].cost = 0;
+                tileData[x, y].previousTile = null;
+                tileData[x, y].visited = false;
+                tileData[x, y].inFringe = false;
             }
         }
     }

@@ -7,6 +7,12 @@ public class MapTile {
     public Vector3 position;
     public bool walkable;
 
+    public MapTile(Vector3 position)
+    {
+        this.position = position;
+        walkable = true;
+    }
+
     public MapTile(Vector3 position, bool walkable)
     {
         this.position = position;

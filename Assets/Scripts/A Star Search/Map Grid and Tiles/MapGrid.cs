@@ -6,12 +6,12 @@ public class MapGrid : MonoBehaviour {
     public Vector2 gridWorldSize; // The actual size of the area to cover.
     public float nodeSize = 1.0f; // The area of each node (decrease for precision, increase for performance).
     public LayerMask unwalkableMask; // Layer mask of all objects agent can't walk through/over.
-
-    int tileCountX; // The amount of tiles across the x axis.
-    int tileCountY; // The amount of tiles across the y axis (z in game).
+    public bool dynamicEnviroment; // If the enviroment can move
 
     [HideInInspector]
     public MapTile[,] tiles; // Parts of the map broken up into tiles
+
+    private bool mapChanged = false;
 
     private void Start()
     {
@@ -21,35 +21,58 @@ public class MapGrid : MonoBehaviour {
             UnityEditor.EditorApplication.isPlaying = false;
         }
 
-        tileCountX = (int)(gridWorldSize.x / nodeSize); // Find how many tiles can fit across x axis of map
-        tileCountY = (int)(gridWorldSize.y / nodeSize); // Find how many tiles can fit across y axis of map
+        initialiseTiles();
+    }
 
-        CreateGrid();
+    private void initialiseTiles()
+    {
+        iVector2 tileCount = new Vector2((int)(gridWorldSize.x / nodeSize), (int)(gridWorldSize.y / nodeSize)); // Find how many tiles fit in the map
+
+        tiles = new MapTile[tileCount.x, tileCount.y]; // Initialise tiles array
+
+        // Find bottom left of map
+        Vector3 mapBottomLeft = transform.position - (Vector3.right * gridWorldSize.x / 2) - (Vector3.forward * gridWorldSize.y / 2);
+
+        for (int x = 0; x < tiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < tiles.GetLength(1); y++)
+            {
+                // Increment from bottom left across x and y axis for each new tile 
+                Vector3 tileLocation = mapBottomLeft + Vector3.right * (x * nodeSize + (nodeSize / 2)) + Vector3.forward * (y * nodeSize + (nodeSize / 2));
+
+                // Create new tile at tileLocation 
+                tiles[x, y] = new MapTile(tileLocation);
+
+            }
+        }
+    }
+
+    private void Update()
+    {
+        if (dynamicEnviroment)
+            updateGrid();
     }
 
     /// <summary>
     /// Populates the grid with mapTiles
     /// </summary>
-    void CreateGrid()
+    void updateGrid()
     {
-        tiles = new MapTile[tileCountX, tileCountY]; // Initialise tiles array
-
-        // Find bottom left of map
-        Vector3 mapBottomLeft = transform.position - (Vector3.right * gridWorldSize.x / 2) - (Vector3.forward * gridWorldSize.y / 2);
+        mapChanged = false;
 
         // Loop through tiles 
-        for (int x = 0; x < tileCountX; x++)
+        for (int x = 0; x < tiles.GetLength(0); x++)
         {
-            for (int y = 0; y < tileCountY; y++)
+            for (int y = 0; y < tiles.GetLength(1); y++)
             {
-                // Increment from bottom left across x and y axis for each new tile 
-                Vector3 tileLocation = mapBottomLeft + Vector3.right * (x * nodeSize + (nodeSize / 2)) + Vector3.forward * (y * nodeSize + (nodeSize / 2));
-
                 // Check if the tile is colliding with an 'unwalkable' layer item.
-                bool walkable = !(Physics.CheckBox(tileLocation, new Vector3(nodeSize / 2, nodeSize / 2, nodeSize / 2), new Quaternion(), unwalkableMask)); 
+                bool walkable = !(Physics.CheckBox(tiles[x,y].position, new Vector3(nodeSize / 2, nodeSize / 2, nodeSize / 2), new Quaternion(), unwalkableMask));
 
-                // Create new tile at tileLocation 
-                tiles[x, y] = new MapTile(tileLocation, walkable);
+                if (walkable != tiles[x, y].walkable) // If the tile state has changed
+                {
+                    mapChanged = true;
+                    tiles[x, y].walkable = walkable;
+                }
             }
         }
     }
@@ -79,12 +102,20 @@ public class MapGrid : MonoBehaviour {
         mapPercentage.y = Mathf.Clamp01((position.z + gridWorldSize.y / 2) / gridWorldSize.y);
 
         // Advance across tiles array for percentage, then round to closest tile
-        int xTile = Mathf.RoundToInt((tileCountX - 1) * mapPercentage.x);
-        int yTile = Mathf.RoundToInt((tileCountY - 1) * mapPercentage.y);
+        int xTile = Mathf.RoundToInt((tiles.GetLength(0) - 1) * mapPercentage.x);
+        int yTile = Mathf.RoundToInt((tiles.GetLength(1) - 1) * mapPercentage.y);
 
         //        0%=================100%
         // Array [0] [1] [2] [3] [4] [5]
 
         return new Vector2(xTile, yTile);
+    }
+
+    /// <summary>
+    /// Returns whether or not the map has changed since the last frame
+    /// </summary>
+    public bool hasChanged()
+    {
+        return mapChanged;
     }
 }
