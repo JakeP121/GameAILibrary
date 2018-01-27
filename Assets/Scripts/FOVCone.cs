@@ -46,7 +46,7 @@ public class FOVCone : MonoBehaviour {
                 RaycastHit hitInfo = new RaycastHit(); // Hit information ready for raycast
                 Physics.Raycast(transform.position, direction, out hitInfo, viewDistance); // Send raycast from this location, to enemy's location to see if it will hit.
 
-                if (hitInfo.collider.CompareTag(enemyTag)) // If it did hit the enemy
+                if (hitInfo.collider && hitInfo.collider.CompareTag(enemyTag)) // If it did hit the enemy
                 {
                     if (visible) // If visible
                         Debug.DrawLine(transform.position, nearbyEnemies[i].transform.position, Color.blue); // Draw a blue debug line between this agent and the enemy
