@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PathFollower : Agent {
+/// <summary>
+/// Behaviour that points an agent to the next node in a path
+/// </summary>
+public class PathFollower : MonoBehaviour {
     public Path path; // The path the agent should follow.
     public bool loop = false; // Should the agent return to the start and begin again after completion.
     public bool loopBackwards = false; // Should the agent turn around and follow the trail backwards after completion.
     public bool startAtClosest = false; // Should the agent start at the closest node, as opposed to the first node.
-    public float waitAtNode = 0.0f; // How long the agent will wait at each node before moving on.
+    public float waitTimeAtNode = 0.0f; // How long the agent will wait at each node before moving on.
 
     private int currentNode = 0; // The current node the agent is moving to or stopped at.
     private bool goingForwards = true; // If the agent is following the path forwards.
     private bool waiting = false; // If the agent is stopped at a node.
     private float waitTime = 0.0f; // How long the agent has been stopped for.
-
 
     private void Start()
     {
@@ -31,19 +33,17 @@ public class PathFollower : Agent {
             currentNode = findClosestNode(); // Set the current node to the closest one
     }
 
-    private new void Update()
+    private void Update()
     {
         if (path == null)
             path = gameObject.GetComponent<Path>();
-
-        base.Update();
     }
 
     /// <summary>
     /// Points to the current node in the path.
     /// </summary>
     /// <returns>A direction vector pointing to currentNode.</returns>
-    protected override Vector3 GetDirectionVector()
+    public Vector3 getDirectionVector()
     {
         // If at the end of the path
         if (currentNode >= path.nodes.Count || (currentNode == -1 && !goingForwards))
@@ -69,9 +69,9 @@ public class PathFollower : Agent {
         // If closer than 2 units
         if (direction.magnitude < 0.5)
         {
-            if (waitAtNode > 0.0f) // If agent should wait at each node
+            if (waitTimeAtNode > 0.0f) // If agent should wait at each node
             {
-                if (waitTime < waitAtNode) // If hasn't finished waiting
+                if (waitTime < waitTimeAtNode) // If hasn't finished waiting
                 {
                     waitTime += Time.deltaTime; // Count time
                     waiting = true;
@@ -98,7 +98,6 @@ public class PathFollower : Agent {
         direction.Normalize(); // Return normalised direction vector
         return direction;
     }
-
 
     /// <summary>
     /// Finds the node closest to the agent's position.

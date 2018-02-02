@@ -3,22 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Agent that moves to target until within a certain distance.
+/// Behaviour that moves the agent to a target until within a certain distance.
 /// </summary>
-public class MoveToTarget : Agent {
+public class MoveToTarget : MonoBehaviour {
 
-    public Agent target; // The target this bot will move towards
+    public Agent target; // The target this agent will move towards
     public float stopAtDistance = 3.0f; // The distance away from the target the bot will stop at
 
-    protected override Vector3 GetDirectionVector()
+    /// <summary>
+    /// Get a direction vector to the target
+    /// </summary>
+    /// <returns>A normalised direction Vector3</returns>
+    public Vector3 getDirectionVector()
     {
-        Vector3 movement = target.transform.position - transform.position; // Get a direction vector pointing to target
+        Vector3 dir = target.transform.position - transform.position; // Get a direction vector pointing to target
 
-        if (movement.magnitude < stopAtDistance) // Once within stopping distance
+        if (dir.magnitude < stopAtDistance) // Once within stopping distance
             return new Vector3();                   // Stop and end early
 
-        movement.Normalize(); // Normalise the direction vector
+        dir.Normalize(); // Normalise the direction vector
 
-        return movement;
+        return dir;
     }
 }

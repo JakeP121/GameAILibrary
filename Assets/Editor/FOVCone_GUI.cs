@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+/// <summary>
+/// Draws the view radius around an agent and a cone depending on the field of view
+/// </summary>
 [CustomEditor (typeof (FOVCone))]
 public class FOVCone_GUI : Editor {
 
@@ -23,8 +26,8 @@ public class FOVCone_GUI : Editor {
         
         // View angle
         // Get the angle in radians of half the view angle left and right of the agent's forward vector.
-        float rightSightAngle = ((cone.viewAngle / 2) + cone.transform.eulerAngles.y) * Mathf.Deg2Rad;
-        float leftSightAngle = ((cone.viewAngle / 2) - cone.transform.eulerAngles.y) * Mathf.Deg2Rad;
+        float rightSightAngle = ((cone.FOV / 2) + cone.transform.eulerAngles.y) * Mathf.Deg2Rad;
+        float leftSightAngle = ((cone.FOV / 2) - cone.transform.eulerAngles.y) * Mathf.Deg2Rad;
 
         // Convert these angles to direction vectors
         Vector3 rightSightPoint = new Vector3(Mathf.Sin(rightSightAngle), 0.0f, Mathf.Cos(rightSightAngle));

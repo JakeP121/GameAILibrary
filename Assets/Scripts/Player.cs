@@ -2,12 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Simple player script with movement
+/// </summary>
 public class Player : Agent {
+
+    private new void Update()
+    {
+        directionVector = getDirectionVector();
+        base.Update();
+    }
+
     /// <summary>
     /// Returns a direction vector pointing according to keyboard input.
     /// </summary>
     /// <returns>A normalised direcion vector3</returns>
-    protected override Vector3 GetDirectionVector()
+    private Vector3 getDirectionVector()
     {
         float hAxis = Input.GetAxis("Horizontal");
         float vAxis = Input.GetAxis("Vertical");

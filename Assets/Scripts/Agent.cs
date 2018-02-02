@@ -6,16 +6,12 @@ using UnityEngine;
 /// This is a base class, designed to be built off of with child classes.
 /// </summary>
 public class Agent : MonoBehaviour {
-    public float maxSpeed = 10.0f;
+    public float maxSpeed = 10.0f; // Maximum speed the agent can move at
+    protected Vector3 directionVector;  // The direction for the agent to move next frame
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	protected void Update () {
-        Move();
+    // Update is called once per frame
+    protected void Update () {
+        move();
 	}
 
     /// <summary>
@@ -23,20 +19,13 @@ public class Agent : MonoBehaviour {
     /// 
     /// Also turns to face where the agent is moving to.
     /// </summary>
-    private void Move()
+    private void move()
     {
-        Vector3 movement = GetDirectionVector(); // Get a direction vector
+        directionVector *= maxSpeed * Time.deltaTime; // Increases direction to max speed but limits with delta time.
 
-        movement *= maxSpeed * Time.deltaTime; // Increases direction to max speed but limits with delta time.
+        transform.Translate(directionVector, Space.World); // Move 
+        transform.LookAt(transform.position + directionVector); // Look where it's walking to
 
-        transform.Translate(movement, Space.World); // Move 
-        transform.LookAt(transform.position + movement); // Look where it's walking to
+        directionVector = Vector3.zero; // Reset directionVector
     }
-
-
-    /// <summary>
-    /// Returns direction vector 3
-    /// </summary>
-    /// <returns>A normalised direction vector3 to tell the agent where to move to</returns>
-    protected virtual Vector3 GetDirectionVector() { return new Vector3(); }
 }

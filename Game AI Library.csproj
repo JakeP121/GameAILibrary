@@ -85,7 +85,6 @@
     <Compile Include="Assets\Scripts\A Star Search\Map Grid and Tiles\MapTile.cs" />
     <Compile Include="Assets\Scripts\Agent.cs" />
     <Compile Include="Assets\Scripts\FOVCone.cs" />
-    <Compile Include="Assets\Scripts\LookAtTarget.cs" />
     <Compile Include="Assets\Scripts\MoveToTarget.cs" />
     <Compile Include="Assets\Scripts\Path Following\Path.cs" />
     <Compile Include="Assets\Scripts\Path Following\PathFollower.cs" />

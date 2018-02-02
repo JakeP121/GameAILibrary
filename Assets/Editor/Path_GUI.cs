@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+/// <summary>
+/// Draws each PathNode of a path and the connection between them
+/// </summary>
 [CustomEditor(typeof(Path))]
 public class Path_GUI : Editor {
 

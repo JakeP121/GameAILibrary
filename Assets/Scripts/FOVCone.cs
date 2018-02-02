@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+/// <summary>
+/// Builds a field of view cone infront of the agent to determine whether another agent can be seen.
+/// </summary>
 public class FOVCone : MonoBehaviour {
-    public string enemyTag;
+    public string enemyTag; // The tag assigned to any possible enemies this script should track.
     public float viewDistance = 10.0f; // The furthest distance the agent can detect enemies.
-    [Range(0, 360)] public float viewAngle = 100.0f; // The angle the agent can see at. 
+    [Range(0, 360)] public float FOV = 100.0f; // The angle the agent can see at. 
     public bool visible; // Whether things like debug lines should be drawn.
 
-    public Agent enemySpotted;
+    public Agent enemySpotted; // The enemy that has been spotted by the agent
 
     private CapsuleCollider proximity; // A collider to detect enemies within viewing distance.
     private List<Agent> nearbyEnemies = new List<Agent>(); // A list of all enemies within viewing distance (not necessarily in sight).
@@ -24,12 +27,10 @@ public class FOVCone : MonoBehaviour {
         proximity.isTrigger = true; // Set to trigger
     }
 
-
     private void Update()
     {
         checkSight();
     }
-
 
     /// <summary>
     /// Checks if any enemies can be seen
@@ -41,7 +42,7 @@ public class FOVCone : MonoBehaviour {
             Vector3 direction = nearbyEnemies[i].transform.position - transform.position; // Direction vector between agent and enemy
             float angle = Vector3.Angle(transform.forward, direction);                   // Angle representation 
 
-            if (angle <= viewAngle / 2) // Is enemy in view angle.
+            if (angle <= FOV / 2) // Is enemy in view angle.
             {
                 RaycastHit hitInfo = new RaycastHit(); // Hit information ready for raycast
                 Physics.Raycast(transform.position, direction, out hitInfo, viewDistance); // Send raycast from this location, to enemy's location to see if it will hit.

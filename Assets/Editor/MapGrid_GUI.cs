@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+/// <summary>
+/// Draws the boundaries of a MapGrid
+/// </summary>
 [CustomEditor(typeof(MapGrid))]
 public class MapGrid_GUI : Editor {
     
@@ -29,7 +32,7 @@ public class MapGrid_GUI : Editor {
                         Handles.color = Color.red;
 
                     // Draw cube over tile 
-                    Handles.CubeHandleCap(controlID, grid.tiles[x, y].position, Quaternion.LookRotation(Vector3.forward), grid.nodeSize, EventType.Repaint);
+                    Handles.CubeHandleCap(controlID, grid.tiles[x, y].position, Quaternion.LookRotation(Vector3.forward), grid.tileSize, EventType.Repaint);
                 }
             }
         }

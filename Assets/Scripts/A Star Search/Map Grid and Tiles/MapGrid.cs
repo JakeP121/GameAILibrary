@@ -2,20 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A collection of MapTiles that can update its data whenever a change occurs
+/// </summary>
 public class MapGrid : MonoBehaviour {
     public Vector2 gridWorldSize; // The actual size of the area to cover.
-    public float nodeSize = 1.0f; // The area of each node (decrease for precision, increase for performance).
+    public float tileSize = 1.0f; // The area of each node (decrease for precision, increase for performance).
     public LayerMask unwalkableMask; // Layer mask of all objects agent can't walk through/over.
     public bool dynamicEnviroment; // If the enviroment can move
 
     [HideInInspector]
     public MapTile[,] tiles; // Parts of the map broken up into tiles
 
-    private bool mapChanged = false;
+    private bool mapChanged = false; // Whether or not the map has changed since the last frame (for dynamic enviroments)
 
     private void Start()
     {
-        if (nodeSize == 0) // Exit with error if node size is zero
+        if (tileSize == 0) // Exit with error if node size is zero
         {
             Debug.LogError("A* error: Node size cannot be zero!");
             UnityEditor.EditorApplication.isPlaying = false;
@@ -24,9 +27,12 @@ public class MapGrid : MonoBehaviour {
         initialiseTiles();
     }
 
+    /// <summary>
+    /// Creates the tile array and assigns them starting values 
+    /// </summary>
     private void initialiseTiles()
     {
-        iVector2 tileCount = new Vector2((int)(gridWorldSize.x / nodeSize), (int)(gridWorldSize.y / nodeSize)); // Find how many tiles fit in the map
+        iVector2 tileCount = new Vector2((int)(gridWorldSize.x / tileSize), (int)(gridWorldSize.y / tileSize)); // Find how many tiles fit in the map
 
         tiles = new MapTile[tileCount.x, tileCount.y]; // Initialise tiles array
 
@@ -38,7 +44,7 @@ public class MapGrid : MonoBehaviour {
             for (int y = 0; y < tiles.GetLength(1); y++)
             {
                 // Increment from bottom left across x and y axis for each new tile 
-                Vector3 tileLocation = mapBottomLeft + Vector3.right * (x * nodeSize + (nodeSize / 2)) + Vector3.forward * (y * nodeSize + (nodeSize / 2));
+                Vector3 tileLocation = mapBottomLeft + Vector3.right * (x * tileSize + (tileSize / 2)) + Vector3.forward * (y * tileSize + (tileSize / 2));
 
                 // Create new tile at tileLocation 
                 tiles[x, y] = new MapTile(tileLocation);
@@ -49,7 +55,7 @@ public class MapGrid : MonoBehaviour {
 
     private void Update()
     {
-        if (dynamicEnviroment)
+        if (dynamicEnviroment) // Only update the grid each frame if there is a dynamic enviroment
             updateGrid();
     }
 
@@ -66,7 +72,7 @@ public class MapGrid : MonoBehaviour {
             for (int y = 0; y < tiles.GetLength(1); y++)
             {
                 // Check if the tile is colliding with an 'unwalkable' layer item.
-                bool walkable = !(Physics.CheckBox(tiles[x,y].position, new Vector3(nodeSize / 2, nodeSize / 2, nodeSize / 2), new Quaternion(), unwalkableMask));
+                bool walkable = !(Physics.CheckBox(tiles[x,y].position, new Vector3(tileSize / 2, tileSize / 2, tileSize / 2), new Quaternion(), unwalkableMask));
 
                 if (walkable != tiles[x, y].walkable) // If the tile state has changed
                 {

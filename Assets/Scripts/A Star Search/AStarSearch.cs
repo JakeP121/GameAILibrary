@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Uses A* path finding to determine the shortest route through a MapGrid
+/// </summary>
 public class AStarSearch : MonoBehaviour {
     public MapGrid mapGrid; // The MapGrid object applied over the map
     public Agent target; // The agent to search for
@@ -202,7 +205,7 @@ public class AStarSearch : MonoBehaviour {
 
         float distance = (start.position - currentTile.tile.position).magnitude; // Calculate the distance from the end to the start
 
-        while (distance > mapGrid.nodeSize) // While the distance is greater than the size of one node
+        while (distance > mapGrid.tileSize) // While the distance is greater than the size of one node
         {
             path.nodes.Add(currentTile.pathNode); // Add the currentTile to the path
 
