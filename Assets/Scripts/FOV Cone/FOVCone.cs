@@ -127,11 +127,19 @@ public class FOVCone : MonoBehaviour
         return closestEnemy;
     }
 
+    /// <summary>
+    /// Nearby enemies accessor method.
+    /// </summary>
+    /// <returns>A list of nearby enemy GameObjects</returns>
     public List<GameObject> getNearbyEnemies()
     {
         return nearbyEnemies;
     }
 
+    /// <summary>
+    /// Visible enemies accessor method.
+    /// </summary>
+    /// <returns>A list of visible GameObjects</returns>
     public List<GameObject> getVisibleEnemies()
     {
         return visibleEnemies;

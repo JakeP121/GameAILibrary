@@ -11,8 +11,8 @@ public class MapGrid : MonoBehaviour {
     public LayerMask unwalkableMask; // Layer mask of all objects agent can't walk through/over.
     public bool dynamicEnviroment; // If the enviroment can move
 
-    [HideInInspector]
-    public MapTile[,] tiles; // Parts of the map broken up into tiles
+    private MapTile[,] tiles; // Parts of the map broken up into tiles
+    private iVector2 gridDimensions; // The x and y count of tiles
 
     private bool mapChanged = false; // Whether or not the map has changed since the last frame (for dynamic enviroments)
 
@@ -32,9 +32,9 @@ public class MapGrid : MonoBehaviour {
     /// </summary>
     private void initialiseTiles()
     {
-        iVector2 tileCount = new Vector2((int)(gridWorldSize.x / tileSize), (int)(gridWorldSize.y / tileSize)); // Find how many tiles fit in the map
+        gridDimensions = new Vector2((int)(gridWorldSize.x / tileSize), (int)(gridWorldSize.y / tileSize)); // Find how many tiles fit in the map
 
-        tiles = new MapTile[tileCount.x, tileCount.y]; // Initialise tiles array
+        tiles = new MapTile[gridDimensions.x, gridDimensions.y]; // Initialise tiles array
 
         // Find bottom left of map
         Vector3 mapBottomLeft = transform.position - (Vector3.right * gridWorldSize.x / 2) - (Vector3.forward * gridWorldSize.y / 2);
@@ -123,5 +123,27 @@ public class MapGrid : MonoBehaviour {
     public bool hasChanged()
     {
         return mapChanged;
+    }
+
+    /// <summary>
+    /// Returns map tiles
+    /// </summary>
+    /// <returns>a 2D array of MapTiles</returns>
+    public MapTile[,] getTiles()
+    {
+        return tiles;
+    }
+
+    public MapTile getTile(int x, int y)
+    {
+        if ((x >= 0 && x < gridDimensions.x) && (y >= 0 && y < gridDimensions.y))
+            return tiles[x, y];
+        else
+            return null;
+    }
+
+    public iVector2 getGridDimensions()
+    {
+        return gridDimensions;
     }
 }

@@ -17,18 +17,21 @@ public class AStarSearch : MonoBehaviour {
     private MapTile start; // The tile at the start of the search (where this game object is placed)
     private MapTile end; // The tile at the end of the search (where the target is placed)
     private LocalTile[,] tileData; // A local copy of the mapGrid tiles, with added costs, heuristics etc.
+    private iVector2 gridDimensions; // A local copy of the map's grid dimensions.
 
 	// Use this for initialization
 	void Start () {
         path = gameObject.AddComponent<Path>(); // Create a path attached to this game object
 
-        tileData = new LocalTile[mapGrid.tiles.GetLength(0), mapGrid.tiles.GetLength(1)]; // Allocate size of local tileData array
+        gridDimensions = mapGrid.getGridDimensions();
 
-        for (int x = 0; x < mapGrid.tiles.GetLength(0); x++) // Loop through mapGrid tiles
+        tileData = new LocalTile[gridDimensions.x, gridDimensions.y]; // Allocate size of local tileData array
+
+        for (int x = 0; x < gridDimensions.x; x++) // Loop through mapGrid tiles
         {
-            for (int y = 0; y < mapGrid.tiles.GetLength(1); y++)
+            for (int y = 0; y < gridDimensions.y; y++)
             {
-                tileData[x, y] = new LocalTile(mapGrid.tiles[x, y]); // Create a new localTile 
+                tileData[x, y] = new LocalTile(mapGrid.getTile(x,y)); // Create a new localTile 
                 tileData[x, y].pathNode = Instantiate(Resources.Load<PathNode>("PathNode")); // Spawn a PathNode prefab object to be associated with the tile
                 tileData[x, y].pathNode.transform.parent = mapGrid.transform; // Assign this PathNode as a child of the MapGrid (To not clog up the heirarchy)
                 tileData[x, y].pathNode.transform.position = tileData[x, y].tile.position; // Move this PathNode to the position of the tile
@@ -81,11 +84,11 @@ public class AStarSearch : MonoBehaviour {
         float lowestHeuristic = Mathf.Infinity; // Lowest heuristic cost for each heuristic to be tested againts (start high to ensure an initial value is found)
         iVector2 closestTile = new iVector2(); // The grid coordinates of the tile
 
-        for (int x = 0; x < mapGrid.tiles.GetLength(0); x++) // Loop through mapGrid
+        for (int x = 0; x < gridDimensions.x; x++) // Loop through mapGrid
         {
-            for (int y = 0; y < mapGrid.tiles.GetLength(1); y++)
+            for (int y = 0; y < gridDimensions.y; y++)
             {
-                Vector3 distance = targetPos - mapGrid.tiles[x, y].position; // Get distance vector between target and current tile
+                Vector3 distance = targetPos - mapGrid.getTile(x,y).position; // Get distance vector between target and current tile
 
                 tileData[x, y].heuristic = distance.magnitude; // Assign the magnitude of this distance vector to tile's heuristic 
 
@@ -98,7 +101,7 @@ public class AStarSearch : MonoBehaviour {
             }
         }
 
-        return mapGrid.tiles[closestTile.x, closestTile.y]; // Return the mapGrid tile with the lowest heuristic
+        return mapGrid.getTile(closestTile.x, closestTile.y); // Return the mapGrid tile with the lowest heuristic
     }
 
     /// <summary>
@@ -121,13 +124,13 @@ public class AStarSearch : MonoBehaviour {
             if (coord.x > 0) // Current tile isn't on left border
                 neighbours.Add(tileData[coord.x - 1, coord.y]);
 
-            if (coord.x < mapGrid.tiles.GetLength(0) - 1) // Current tile isn't on right border
+            if (coord.x < gridDimensions.x - 1) // Current tile isn't on right border
                 neighbours.Add(tileData[coord.x + 1, coord.y]);
 
             if (coord.y > 0) // Current tile isn't on bottom border
                 neighbours.Add(tileData[coord.x, coord.y - 1]);
 
-            if (coord.y < mapGrid.tiles.GetLength(1) - 1) // Current tile isn't on top border
+            if (coord.y < gridDimensions.y - 1) // Current tile isn't on top border
                 neighbours.Add(tileData[coord.x, coord.y + 1]);
 
             for (int i = 0; i < neighbours.Count; i++) // Loop through neighbours
@@ -191,7 +194,7 @@ public class AStarSearch : MonoBehaviour {
             }
         }
 
-        return mapGrid.tiles[closestNeighbour.x, closestNeighbour.y];
+        return mapGrid.getTile(closestNeighbour.x, closestNeighbour.y);
     }
 
     /// <summary>
