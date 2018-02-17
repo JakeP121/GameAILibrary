@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Hide : MonoBehaviour {
 
-    public float reach;
+    public float reach = 2.0f;
     public bool hidden = false;
 
     private CapsuleCollider proximity;

@@ -6,16 +6,15 @@ using UnityEditor;
 /// <summary>
 /// Builds a field of view cone infront of the agent to determine whether another agent can be seen.
 /// </summary>
-public class FOVCone : MonoBehaviour {
+public class FOVCone : MonoBehaviour
+{
     public string enemyTag; // The tag assigned to any possible enemies this script should track.
     public float viewDistance = 10.0f; // The furthest distance the agent can detect enemies.
     [Range(0, 360)] public float FOV = 100.0f; // The angle the agent can see at. 
-    public bool visible; // Whether things like debug lines should be drawn.
-
-    public Agent enemySpotted; // The enemy that has been spotted by the agent
 
     private CapsuleCollider proximity; // A collider to detect enemies within viewing distance.
-    private List<Agent> nearbyEnemies = new List<Agent>(); // A list of all enemies within viewing distance (not necessarily in sight).
+    private List<GameObject> nearbyEnemies = new List<GameObject>(); // A list of all enemies within viewing distance (not necessarily in sight).
+    private List<GameObject> visibleEnemies = new List<GameObject>(); // A list of all enemies within viewing distance and visible
 
     /// <summary>
     /// Sets up collider
@@ -37,6 +36,8 @@ public class FOVCone : MonoBehaviour {
     /// </summary>
     private void checkSight()
     {
+        visibleEnemies.Clear();
+
         for (int i = 0; i < nearbyEnemies.Count; i++) // Loop through nearby agents
         {
             Vector3 direction = nearbyEnemies[i].transform.position - transform.position; // Direction vector between agent and enemy
@@ -49,19 +50,10 @@ public class FOVCone : MonoBehaviour {
 
                 if (hitInfo.collider && hitInfo.collider.CompareTag(enemyTag)) // If it did hit the enemy
                 {
-                    if (visible) // If visible
-                        Debug.DrawLine(transform.position, nearbyEnemies[i].transform.position, Color.blue); // Draw a blue debug line between this agent and the enemy
-
-                    enemySpotted = hitInfo.collider.GetComponent<Agent>(); // Set enemySpotted to the enemy it is looking at now.
-                    return; // Return early since only one enemy can be targetted at a time.
+                    visibleEnemies.Add(hitInfo.collider.gameObject); // Add enemy to visible enemy array
                 }
             }
-
-            if (visible) // If visible
-                Debug.DrawLine(transform.position, nearbyEnemies[i].transform.position, Color.red); // Draw a red debug line between this agent and the enemy
         }
-
-        enemySpotted = null; // No enemy has been spotted this passs
     }
 
     /// <summary>
@@ -71,7 +63,7 @@ public class FOVCone : MonoBehaviour {
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag(enemyTag)) // If enemy is in proximity
-            nearbyEnemies.Add(other.GetComponent<Agent>()); // Add it to nearbyEnemies list
+            nearbyEnemies.Add(other.gameObject); // Add it to nearbyEnemies list
     }
 
     /// <summary>
@@ -82,19 +74,66 @@ public class FOVCone : MonoBehaviour {
     {
         if (other.CompareTag(enemyTag)) // If enemy is no longer in proximity
         {
-            int i = 0;
-            bool indexFound = false;
-
-            while (i < nearbyEnemies.Count && !indexFound) // Find enemy's location in nearbyEnemies array
-            {
-                if (nearbyEnemies[i] == other.GetComponent<Agent>())
-                    indexFound = true;
-                else
-                    i++;
-            }
-
-            if (indexFound)
-                nearbyEnemies.RemoveAt(i); // Remove it from the array 
+            int index = getIndexOf(other.gameObject);
+            nearbyEnemies.RemoveAt(index); // Remove it from the array 
         }
+    }
+
+    /// <summary>
+    /// Finds the index of a specified target.
+    /// </summary>
+    /// <param name="target">An enemy near to this agent</param>
+    /// <returns>The index of the enemy in FOVCone's nearbyEnemies array</returns>
+    private int getIndexOf(GameObject target)
+    {
+        int i = -1;
+
+        if (!nearbyEnemies.Contains(target)) // If nearbyEnemies doesn't contain target, end early
+            return i;
+
+        GameObject currentEnemy = null;
+
+        do // Iterate through occupants until target found
+        {
+            i++;
+            currentEnemy = nearbyEnemies[i];
+        } while (i < nearbyEnemies.Count && currentEnemy != target);
+
+        return i;
+    }
+
+
+    /// <summary>
+    /// Returns the closest visible enemy
+    /// </summary>
+    /// <returns>closest visible GameObject or null if no visible enemies</returns>
+    public GameObject getClosestVisibleEnemy()
+    {
+        float shortestDistance = Mathf.Infinity;
+        GameObject closestEnemy = null;
+
+        for (int i = 0; i < nearbyEnemies.Count; i++)
+        {
+            Vector3 directionVector = nearbyEnemies[i].transform.position - this.transform.position;
+            float distance = directionVector.magnitude;
+
+            if (distance < shortestDistance)
+            {
+                shortestDistance = distance;
+                closestEnemy = nearbyEnemies[i];
+            }
+        }
+
+        return closestEnemy;
+    }
+
+    public List<GameObject> getNearbyEnemies()
+    {
+        return nearbyEnemies;
+    }
+
+    public List<GameObject> getVisibleEnemies()
+    {
+        return visibleEnemies;
     }
 }

@@ -13,7 +13,7 @@ public class HidingSpot : MonoBehaviour {
     /// </summary>
     /// <param name="target">The game object to search for</param>
     /// <returns>The index of target or -1 if target isn't in list</returns>
-    private int findIndexOf(GameObject target)
+    private int getIndexOf(GameObject target)
     {
         int i = -1;
 
@@ -57,7 +57,7 @@ public class HidingSpot : MonoBehaviour {
     /// <param name="occupant">Already hidden game object</param>
     public void leave(GameObject occupant)
     {
-        int index = findIndexOf(occupant);
+        int index = getIndexOf(occupant);
 
         if (index != -1) // Remove from occupants
         {
@@ -104,7 +104,7 @@ public class HidingSpot : MonoBehaviour {
     /// <returns>The target if found, else null</returns>
     public GameObject search(GameObject target)
     {
-        int index = findIndexOf(target);
+        int index = getIndexOf(target);
 
         if (index != -1)
         {
