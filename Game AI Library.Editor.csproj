@@ -121,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Editor\FOVCone_GUI.cs" />
+    <Compile Include="Assets\Editor\Hide_GUI.cs" />
     <Compile Include="Assets\Editor\MapGrid_GUI.cs" />
     <Compile Include="Assets\Editor\Path_GUI.cs" />
   </ItemGroup>

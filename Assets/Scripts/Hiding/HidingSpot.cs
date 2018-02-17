@@ -5,7 +5,8 @@ using UnityEngine;
 public class HidingSpot : MonoBehaviour {
 
     public int spaces = 1;
-    List<GameObject> occupants; 
+    private List<GameObject> occupants = new List<GameObject>();
+    private List<Vector3> previousPositions = new List<Vector3>();
 
     /// <summary>
     /// Finds the index of a game object in the occupants list
@@ -14,16 +15,17 @@ public class HidingSpot : MonoBehaviour {
     /// <returns>The index of target or -1 if target isn't in list</returns>
     private int findIndexOf(GameObject target)
     {
-        if (!occupants.Contains(target)) // If occupants doesn't contain target, end early
-            return -1;
+        int i = -1;
 
-        int i = 0;
-        GameObject currentOccupant;
+        if (!occupants.Contains(target)) // If occupants doesn't contain target, end early
+            return i;
+
+        GameObject currentOccupant = null;
 
         do // Iterate through occupants until target found
         {
-            currentOccupant = occupants[i];
             i++;
+            currentOccupant = occupants[i];         
         } while (i < occupants.Count && currentOccupant != target);
 
         return i;
@@ -39,6 +41,10 @@ public class HidingSpot : MonoBehaviour {
         if (occupants.Count < spaces) 
         {
             occupants.Add(gameObject);
+            previousPositions.Add(gameObject.transform.position);
+
+            occupants[occupants.Count - 1].transform.position = this.transform.position + new Vector3(0.0f, +1000.0f, 0.0f);
+
             return true;
         }
         else
@@ -53,8 +59,16 @@ public class HidingSpot : MonoBehaviour {
     {
         int index = findIndexOf(occupant);
 
-        if (index != -1)
+        if (index != -1) // Remove from occupants
+        {
+            occupant.GetComponent<Hide>().hidden = false; // Signal that the occupant is now unhidden
+            occupant.transform.position = previousPositions[index]; // Move occupant back to it's previous position
+
             occupants.RemoveAt(index);
+            previousPositions.RemoveAt(index);
+        }
+
+        
     }
 
     /// <summary>

@@ -85,7 +85,8 @@
     <Compile Include="Assets\Scripts\A Star Search\Map Grid and Tiles\MapTile.cs" />
     <Compile Include="Assets\Scripts\Agent.cs" />
     <Compile Include="Assets\Scripts\FOV Cone\FOVCone.cs" />
-    <Compile Include="Assets\Scripts\Hiding Spot.cs" />
+    <Compile Include="Assets\Scripts\Hiding\Hide.cs" />
+    <Compile Include="Assets\Scripts\Hiding\HidingSpot.cs" />
     <Compile Include="Assets\Scripts\Path Following\Path.cs" />
     <Compile Include="Assets\Scripts\Path Following\PathFollower.cs" />
     <Compile Include="Assets\Scripts\Path Following\PathNode.cs" />
