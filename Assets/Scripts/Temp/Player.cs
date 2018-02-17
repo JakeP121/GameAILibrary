@@ -7,8 +7,16 @@ using UnityEngine;
 /// </summary>
 public class Player : Agent {
 
+    Hide hide;
+
+    private void Start()
+    {
+        hide = GetComponent<Hide>();
+    }
+
     private new void Update()
     {
+        getInput();
         directionVector = getDirectionVector();
         base.Update();
     }
@@ -27,5 +35,16 @@ public class Player : Agent {
         movement.Normalize();
 
         return movement;
+    }
+
+    private void getInput()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (!hide.hidden)
+                hide.hide();
+            else
+                hide.leave();
+        }
     }
 }
