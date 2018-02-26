@@ -5,8 +5,8 @@ using UnityEngine;
 public class Hide : MonoBehaviour {
 
     public float reach = 2.0f;
-    public bool hidden = false;
 
+    private bool hidden = false;
     private CapsuleCollider proximity;
     private List<HidingSpot> nearbyHidingSpots = new List<HidingSpot>();
     private HidingSpot currentHidingSpot = null;
@@ -18,7 +18,9 @@ public class Hide : MonoBehaviour {
         proximity.isTrigger = true;
 	}
 	
-
+    /// <summary>
+    /// Enters the closest hiding spot
+    /// </summary>
     public void hide()
     {
         HidingSpot hidingSpot = findClosestSpot();
@@ -30,6 +32,9 @@ public class Hide : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Leaves a hiding spot
+    /// </summary>
     public void leave()
     {
         if (hidden)
@@ -39,12 +44,20 @@ public class Hide : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// If the other collider is a hiding spot, adds it to the nearbyHidingSpots list
+    /// </summary>
+    /// <param name="other">The colliding object</param>
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Hiding Spot"))
             nearbyHidingSpots.Add(other.gameObject.GetComponent<HidingSpot>());
     }
 
+    /// <summary>
+    /// If the other collider is a hiding spot, removes it from the nearbyHidingSpots list
+    /// </summary>
+    /// <param name="other">The colliding object</param>
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Hiding Spot"))
@@ -56,6 +69,11 @@ public class Hide : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Finds the index of a HidingSpot object in the nearbyHidingSpots list
+    /// </summary>
+    /// <param name="hidingSpot">The hiding spot to search for</param>
+    /// <returns>The index if found, else -1</returns>
     private int getIndexOf(HidingSpot hidingSpot)
     {
         // If nearbyHidingSpots does not contain hidingSpot
@@ -74,7 +92,11 @@ public class Hide : MonoBehaviour {
         return i;
     }
 
-    private HidingSpot findClosestSpot()
+    /// <summary>
+    /// Finds the closest hiding spot
+    /// </summary>
+    /// <returns>The closest hiding spot to this agent</returns>
+    public HidingSpot findClosestSpot()
     {
         float closestDistance = Mathf.Infinity;
         HidingSpot closestHidingSpot = null;
@@ -92,5 +114,32 @@ public class Hide : MonoBehaviour {
         }
 
         return closestHidingSpot;
+    }
+
+    /// <summary>
+    /// Returns nearbyHidingSpots
+    /// </summary>
+    /// <returns>A list of all nearby hiding spots</returns>
+    public List<HidingSpot> getNearbyHidingSpots()
+    {
+        return nearbyHidingSpots;
+    }
+
+    /// <summary>
+    /// Sets this.hidden to hidden
+    /// </summary>
+    /// <param name="hidden">A boolean whether or not the agent is hidden</param>
+    public void setHidden(bool hidden)
+    {
+        this.hidden = hidden;
+    }
+
+    /// <summary>
+    /// Returns hidden variable
+    /// </summary>
+    /// <returns>True if hidden, else false</returns>
+    public bool isHidden()
+    {
+        return hidden;
     }
 }

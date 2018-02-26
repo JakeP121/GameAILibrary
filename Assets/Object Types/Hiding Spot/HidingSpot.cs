@@ -61,7 +61,7 @@ public class HidingSpot : MonoBehaviour {
 
         if (index != -1) // Remove from occupants
         {
-            occupant.GetComponent<Hide>().hidden = false; // Signal that the occupant is now unhidden
+            occupant.GetComponent<Hide>().setHidden(false); // Signal that the occupant is now unhidden
             occupant.transform.position = previousPositions[index]; // Move occupant back to it's previous position
 
             occupants.RemoveAt(index);

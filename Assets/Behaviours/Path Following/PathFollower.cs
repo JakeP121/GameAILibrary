@@ -45,6 +45,9 @@ public class PathFollower : MonoBehaviour {
     /// <returns>A direction vector pointing to currentNode.</returns>
     public Vector3 getDirectionVector()
     {
+        if (path == null || path.nodes.Count == 0)
+            return Vector3.zero;
+
         // If at the end of the path
         if (currentNode >= path.nodes.Count || (currentNode == -1 && !goingForwards))
         {

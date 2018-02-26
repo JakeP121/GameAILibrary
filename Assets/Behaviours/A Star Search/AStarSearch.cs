@@ -11,8 +11,7 @@ public class AStarSearch : MonoBehaviour {
 
     private Vector3 targetPos; // Position of the target to be updated each frame
 
-    [HideInInspector]
-    public Path path; // The path created from the A* search
+    private Path path; // The path created from the A* search
 
     private MapTile start; // The tile at the start of the search (where this game object is placed)
     private MapTile end; // The tile at the end of the search (where the target is placed)
@@ -210,6 +209,9 @@ public class AStarSearch : MonoBehaviour {
 
         while (distance > mapGrid.tileSize) // While the distance is greater than the size of one node
         {
+            if (currentTile.previousTile == null)
+                return;
+
             path.nodes.Add(currentTile.pathNode); // Add the currentTile to the path
 
             currentTile = currentTile.previousTile; // Move backwards and set it as the next currentTile
@@ -250,5 +252,14 @@ public class AStarSearch : MonoBehaviour {
                 tileData[x, y].inFringe = false;
             }
         }
+    }
+
+    /// <summary>
+    /// Returns the path found between this and target
+    /// </summary>
+    /// <returns>Path to Target</returns>
+    public Path getPath()
+    {
+        return path;
     }
 }

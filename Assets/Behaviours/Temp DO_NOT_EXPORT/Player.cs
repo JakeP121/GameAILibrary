@@ -41,7 +41,7 @@ public class Player : Agent {
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (!hide.hidden)
+            if (!hide.isHidden())
                 hide.hide();
             else
                 hide.leave();

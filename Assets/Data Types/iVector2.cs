@@ -126,6 +126,22 @@ public class iVector2 {
         return new iVector2(a * b.x, a * b.y);
     }
 
+    /// <summary>
+    /// Multiplying a vector by a float
+    /// </summary>
+    public static iVector2 operator *(iVector2 a, float b)
+    {
+        return new iVector2((int)(a.x * b), (int)(a.y * b));
+    }
+
+    /// <summary>
+    /// Multiplying a vector by a float
+    /// </summary>
+    public static iVector2 operator *(float a, iVector2 b)
+    {
+        return new iVector2((int)(a * b.x), (int)(a * b.y));
+    }
+
 
     // Division
 
@@ -135,6 +151,14 @@ public class iVector2 {
     public static iVector2 operator / (iVector2 a, iVector2 b)
     {
         return new iVector2(a.x / b.x, a.y / b.y);
+    }
+
+    /// <summary>
+    /// Dividing iVector2 by Vector2
+    /// </summary>
+    public static iVector2 operator / (iVector2 a, Vector2 b)
+    {
+        return new iVector2((int)(a.x / b.x), (int)(a.y / b.y));
     }
 
     /// <summary>

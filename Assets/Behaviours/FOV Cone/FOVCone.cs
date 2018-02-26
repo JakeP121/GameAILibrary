@@ -112,9 +112,9 @@ public class FOVCone : MonoBehaviour
         float shortestDistance = Mathf.Infinity;
         GameObject closestEnemy = null;
 
-        for (int i = 0; i < nearbyEnemies.Count; i++)
+        for (int i = 0; i < visibleEnemies.Count; i++)
         {
-            Vector3 directionVector = nearbyEnemies[i].transform.position - this.transform.position;
+            Vector3 directionVector = visibleEnemies[i].transform.position - this.transform.position;
             float distance = directionVector.magnitude;
 
             if (distance < shortestDistance)

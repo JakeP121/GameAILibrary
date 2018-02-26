@@ -49,6 +49,11 @@ public class MapGrid : MonoBehaviour {
                 // Create new tile at tileLocation 
                 tiles[x, y] = new MapTile(tileLocation);
 
+                // Check if the tile is colliding with an 'unwalkable' layer item.
+                bool walkable = !(Physics.CheckBox(tiles[x, y].position, new Vector3(tileSize / 2, tileSize / 2, tileSize / 2), new Quaternion(), unwalkableMask));
+
+                tiles[x, y].walkable = walkable;
+
             }
         }
     }
