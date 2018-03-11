@@ -139,14 +139,23 @@ public class MapGrid : MonoBehaviour {
         return tiles;
     }
 
-    public MapTile getTile(int x, int y)
+    /// <summary>
+    /// Gets the MapTile from an iVector2 coordinate
+    /// </summary>
+    /// <param name="coord">The iVector2 coordinate</param>
+    /// <returns>The corresponding MapTile or null if not in range</returns>
+    public MapTile getTile(iVector2 coord)
     {
-        if ((x >= 0 && x < gridDimensions.x) && (y >= 0 && y < gridDimensions.y))
-            return tiles[x, y];
+        if ((coord.x >= 0 && coord.x < gridDimensions.x) && (coord.y >= 0 && coord.y < gridDimensions.y))
+            return tiles[coord.x, coord.y];
         else
             return null;
     }
 
+    /// <summary>
+    /// Returns the amount of tiles across the X and Y axis in iVector2 form.
+    /// </summary>
+    /// <returns>grid dimensions</returns>
     public iVector2 getGridDimensions()
     {
         return gridDimensions;

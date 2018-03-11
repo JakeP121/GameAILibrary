@@ -36,7 +36,7 @@ public class HidingSpot : MonoBehaviour {
     /// </summary>
     /// <param name="gameObject">The game object to hide</param>
     /// <returns>True if gameObject can fit in hiding spot, else false</returns>
-    public bool hide(GameObject gameObject)
+    public void hide(GameObject gameObject)
     {
         if (occupants.Count < spaces) 
         {
@@ -45,10 +45,8 @@ public class HidingSpot : MonoBehaviour {
 
             occupants[occupants.Count - 1].transform.position = this.transform.position + new Vector3(0.0f, +1000.0f, 0.0f);
 
-            return true;
+            gameObject.GetComponent<Hide>().setHidden(true); // Signal that the occupant is now hidden
         }
-        else
-            return false;
     }
 
     /// <summary>

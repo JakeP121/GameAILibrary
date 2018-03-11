@@ -27,7 +27,7 @@ public class Hide : MonoBehaviour {
 
         if (hidingSpot != null)
         {
-            hidden = hidingSpot.hide(this.gameObject);
+            hidingSpot.hide(this.gameObject);
             currentHidingSpot = hidingSpot;
         }
     }
