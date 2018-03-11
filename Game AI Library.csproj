@@ -81,10 +81,13 @@
     <Compile Include="Assets\Behaviours\A Star Search\AStarSearch.cs" />
     <Compile Include="Assets\Behaviours\FOV Cone\FOVCone.cs" />
     <Compile Include="Assets\Behaviours\Hiding\Hide.cs" />
+    <Compile Include="Assets\Behaviours\Path Following\DynamicPathCreation.cs" />
     <Compile Include="Assets\Behaviours\Path Following\PathFollower.cs" />
+    <Compile Include="Assets\Behaviours\Sound Awareness\Listener.cs" />
+    <Compile Include="Assets\Behaviours\Sound Awareness\LocalSound.cs" />
+    <Compile Include="Assets\Behaviours\Sound Awareness\Sound.cs" />
     <Compile Include="Assets\Behaviours\Temp DO_NOT_EXPORT\AdvancedAgent.cs" />
     <Compile Include="Assets\Behaviours\Temp DO_NOT_EXPORT\Agent.cs" />
-    <Compile Include="Assets\Behaviours\Temp DO_NOT_EXPORT\HideyBoy.cs" />
     <Compile Include="Assets\Behaviours\Temp DO_NOT_EXPORT\Player.cs" />
     <Compile Include="Assets\Data Types\iVector2.cs" />
     <Compile Include="Assets\Object Types\Hiding Spot\HidingSpot.cs" />

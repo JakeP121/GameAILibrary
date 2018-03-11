@@ -7,21 +7,19 @@ using UnityEngine;
 /// </summary>
 public class PathFollower : MonoBehaviour {
     public Path path; // The path the agent should follow.
+    public float accuracy = 2.0f; // The distance away from a node the agent needs to get to before it moves onto the next one.
     public bool loop = false; // Should the agent return to the start and begin again after completion.
     public bool loopBackwards = false; // Should the agent turn around and follow the trail backwards after completion.
     public bool startAtClosest = false; // Should the agent start at the closest node, as opposed to the first node.
     public float waitTimeAtNode = 0.0f; // How long the agent will wait at each node before moving on.
+    public bool ableToJumpAhead = false; // If the path overlaps, should the agent jump ahead to the furthest node? (True for chase paths, false for patrol paths)
 
     private int currentNode = 0; // The current node the agent is moving to or stopped at.
     private bool goingForwards = true; // If the agent is following the path forwards.
-    private bool waiting = false; // If the agent is stopped at a node.
     private float waitTime = 0.0f; // How long the agent has been stopped for.
 
     private void Start()
-    {
-        if (path == null)
-            path = gameObject.GetComponent<Path>();
-        
+    {      
         // Return error and stop application from running if both loop and loopBackwards are true
         if (loop && loopBackwards)
         {
@@ -35,8 +33,7 @@ public class PathFollower : MonoBehaviour {
 
     private void Update()
     {
-        if (path == null)
-            path = gameObject.GetComponent<Path>();
+
     }
 
     /// <summary>
@@ -48,7 +45,16 @@ public class PathFollower : MonoBehaviour {
         if (path == null || path.nodes.Count == 0)
             return Vector3.zero;
 
-        // If at the end of the path
+        if (ableToJumpAhead)
+        {
+            // Find closest node to see if we can jump ahead
+            int closestNode = findClosestNode();
+
+            if (closestNode > currentNode || currentNode >= path.nodes.Count || (path.nodes[currentNode].transform.position - path.nodes[closestNode].transform.position).magnitude > accuracy * 2)
+                currentNode = closestNode;
+        }
+
+        // If invalid node
         if (currentNode >= path.nodes.Count || (currentNode == -1 && !goingForwards))
         {
             if (loop) // If it is looping
@@ -62,44 +68,61 @@ public class PathFollower : MonoBehaviour {
 
                 goingForwards = !goingForwards; // Flip the goingForwards boolean
             }
-            else
-                return new Vector3();
+            else // Not looping
+                return Vector3.zero;
         }
 
         // Find direction vector to current node
         Vector3 direction = path.nodes[currentNode].transform.position - transform.position;
 
-        // If closer than 2 units
-        if (direction.magnitude < 0.5)
+
+        // If the node is still too far away, move to it
+        if (direction.magnitude > accuracy)
         {
-            if (waitTimeAtNode > 0.0f) // If agent should wait at each node
-            {
-                if (waitTime < waitTimeAtNode) // If hasn't finished waiting
-                {
-                    waitTime += Time.deltaTime; // Count time
-                    waiting = true;
-                }
-                else                        // Has finished waiting
-                {
-                    waitTime = 0.0f;            // Reset count
-                    waiting = false;
-                }
-            }
-
-            if (!waiting) // If not waiting, advance to next node
-            {
-                // Decide what next node is
-                if (goingForwards)
-                    currentNode++;
-                else
-                    currentNode--;
-            }
-
-            return new Vector3(); // Stop
+            direction.Normalize(); // Return normalised direction vector
+            return direction;
         }
 
-        direction.Normalize(); // Return normalised direction vector
-        return direction;
+        // Agent has reached node
+
+        if (waitTimeAtNode > 0.0f) // If agent should wait at node
+        {
+            if (waitTime < waitTimeAtNode) // If hasn't finished waiting
+            {
+                waitTime += Time.deltaTime; // Count time
+                return Vector3.zero;
+            }
+            else                        // Has finished waiting
+                waitTime = 0.0f;            // Reset count
+        }
+
+
+        // Decide what next node is
+        if (goingForwards)
+            currentNode++;
+        else
+            currentNode--;
+
+        // If invalid node
+        if (currentNode >= path.nodes.Count || (currentNode == -1 && !goingForwards))
+        {
+            if (loop) // If it is looping
+                currentNode = 0; // Set currentNode to 0
+            else if (loopBackwards) // If it is looping backwards
+            {
+                if (currentNode >= path.nodes.Count) // If it was going forward 
+                    currentNode = path.nodes.Count - 2; // Set current node to the one before the end
+                else                                 // It was going backwards
+                    currentNode = 1;                    // Set current node to 1 
+
+                goingForwards = !goingForwards; // Flip the goingForwards boolean
+            }
+            else // Not looping
+                return Vector3.zero;
+        }
+
+        direction = path.nodes[currentNode].transform.position - transform.position;
+        return direction.normalized;
     }
 
     /// <summary>
