@@ -7,11 +7,9 @@ using UnityEngine;
 /// </summary>
 public class Player : Agent {
 
-    DynamicPathCreation pathCreation;
-
     private void Start()
     {
-        pathCreation = GetComponent<DynamicPathCreation>();
+
     }
 
     private new void Update()

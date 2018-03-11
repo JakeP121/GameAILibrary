@@ -93,6 +93,8 @@
     <Compile Include="Assets\Object Types\Hiding Spot\HidingSpot.cs" />
     <Compile Include="Assets\Object Types\Map Grid and Tiles\LocalTile.cs" />
     <Compile Include="Assets\Object Types\Map Grid and Tiles\MapGrid.cs" />
+    <Compile Include="Assets\Object Types\Map Grid and Tiles\MapGrid_Mask.cs" />
+    <Compile Include="Assets\Object Types\Map Grid and Tiles\MapGrid_Terrain.cs" />
     <Compile Include="Assets\Object Types\Map Grid and Tiles\MapTile.cs" />
     <Compile Include="Assets\Object Types\Pathing\Path.cs" />
     <Compile Include="Assets\Object Types\Pathing\PathNode.cs" />

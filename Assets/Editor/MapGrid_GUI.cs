@@ -6,7 +6,7 @@ using UnityEditor;
 /// <summary>
 /// Draws the boundaries of a MapGrid
 /// </summary>
-[CustomEditor(typeof(MapGrid))]
+[CustomEditor(typeof(MapGrid), true)]
 public class MapGrid_GUI : Editor {
     
     private void OnSceneGUI()

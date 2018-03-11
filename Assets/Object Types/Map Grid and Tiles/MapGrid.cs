@@ -5,16 +5,16 @@ using UnityEngine;
 /// <summary>
 /// A collection of MapTiles that can update its data whenever a change occurs
 /// </summary>
-public class MapGrid : MonoBehaviour {
+abstract public class MapGrid : MonoBehaviour {
     public Vector2 gridWorldSize; // The actual size of the area to cover.
     public float tileSize = 1.0f; // The area of each node (decrease for precision, increase for performance).
-    public LayerMask unwalkableMask; // Layer mask of all objects agent can't walk through/over.
+
     public bool dynamicEnviroment; // If the enviroment can move
+    protected MapTile[,] tiles; // Parts of the map broken up into tiles
 
-    private MapTile[,] tiles; // Parts of the map broken up into tiles
-    private iVector2 gridDimensions; // The x and y count of tiles
+    protected iVector2 gridDimensions; // The x and y count of tiles
 
-    private bool mapChanged = false; // Whether or not the map has changed since the last frame (for dynamic enviroments)
+    protected bool mapChanged = false; // Whether or not the map has changed since the last frame (for dynamic enviroments)
 
     private void Start()
     {
@@ -30,33 +30,7 @@ public class MapGrid : MonoBehaviour {
     /// <summary>
     /// Creates the tile array and assigns them starting values 
     /// </summary>
-    private void initialiseTiles()
-    {
-        gridDimensions = new Vector2((int)(gridWorldSize.x / tileSize), (int)(gridWorldSize.y / tileSize)); // Find how many tiles fit in the map
-
-        tiles = new MapTile[gridDimensions.x, gridDimensions.y]; // Initialise tiles array
-
-        // Find bottom left of map
-        Vector3 mapBottomLeft = transform.position - (Vector3.right * gridWorldSize.x / 2) - (Vector3.forward * gridWorldSize.y / 2);
-
-        for (int x = 0; x < tiles.GetLength(0); x++)
-        {
-            for (int y = 0; y < tiles.GetLength(1); y++)
-            {
-                // Increment from bottom left across x and y axis for each new tile 
-                Vector3 tileLocation = mapBottomLeft + Vector3.right * (x * tileSize + (tileSize / 2)) + Vector3.forward * (y * tileSize + (tileSize / 2));
-
-                // Create new tile at tileLocation 
-                tiles[x, y] = new MapTile(tileLocation);
-
-                // Check if the tile is colliding with an 'unwalkable' layer item.
-                bool walkable = !(Physics.CheckBox(tiles[x, y].position, new Vector3(tileSize / 2, tileSize / 2, tileSize / 2), new Quaternion(), unwalkableMask));
-
-                tiles[x, y].walkable = walkable;
-
-            }
-        }
-    }
+    protected virtual void initialiseTiles() { }
 
     private void Update()
     {
@@ -65,28 +39,9 @@ public class MapGrid : MonoBehaviour {
     }
 
     /// <summary>
-    /// Populates the grid with mapTiles
+    /// Checks if each tile is walkable
     /// </summary>
-    void updateGrid()
-    {
-        mapChanged = false;
-
-        // Loop through tiles 
-        for (int x = 0; x < tiles.GetLength(0); x++)
-        {
-            for (int y = 0; y < tiles.GetLength(1); y++)
-            {
-                // Check if the tile is colliding with an 'unwalkable' layer item.
-                bool walkable = !(Physics.CheckBox(tiles[x,y].position, new Vector3(tileSize / 2, tileSize / 2, tileSize / 2), new Quaternion(), unwalkableMask));
-
-                if (walkable != tiles[x, y].walkable) // If the tile state has changed
-                {
-                    mapChanged = true;
-                    tiles[x, y].walkable = walkable;
-                }
-            }
-        }
-    }
+    protected virtual void updateGrid() { }
 
     /// <summary>
     /// Returns the corresponding mapTile from a position
@@ -108,6 +63,8 @@ public class MapGrid : MonoBehaviour {
     /// <returns>Vector 2 grid coordinate</returns>
     public iVector2 getCoordFromPosition(Vector3 position)
     {
+        position -= transform.position;
+
         Vector2 mapPercentage; // Convert the position to a percentage across the available map (clamped between 0% and 100%).
         mapPercentage.x = Mathf.Clamp01((position.x + gridWorldSize.x / 2) / gridWorldSize.x);
         mapPercentage.y = Mathf.Clamp01((position.z + gridWorldSize.y / 2) / gridWorldSize.y);
