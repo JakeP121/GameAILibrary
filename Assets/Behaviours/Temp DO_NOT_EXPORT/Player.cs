@@ -7,11 +7,11 @@ using UnityEngine;
 /// </summary>
 public class Player : Agent {
 
-    Hide hide;
+    DynamicPathCreation pathCreation;
 
     private void Start()
     {
-        hide = GetComponent<Hide>();
+        pathCreation = GetComponent<DynamicPathCreation>();
     }
 
     private new void Update()
@@ -19,7 +19,7 @@ public class Player : Agent {
         getInput();
         directionVector = getDirectionVector();
         base.Update();
-    }
+    } 
 
     /// <summary>
     /// Returns a direction vector pointing according to keyboard input.
@@ -41,10 +41,7 @@ public class Player : Agent {
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (!hide.isHidden())
-                hide.hide();
-            else
-                hide.leave();
+
         }
     }
 }

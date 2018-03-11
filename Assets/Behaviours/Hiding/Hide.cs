@@ -50,7 +50,7 @@ public class Hide : MonoBehaviour {
     /// <param name="other">The colliding object</param>
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Hiding Spot"))
+        if (other.transform.GetComponent("HidingSpot") != null)
             nearbyHidingSpots.Add(other.gameObject.GetComponent<HidingSpot>());
     }
 
@@ -60,7 +60,7 @@ public class Hide : MonoBehaviour {
     /// <param name="other">The colliding object</param>
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Hiding Spot"))
+        if (other.transform.GetComponent("HidingSpot") != null)
         {
             int index = getIndexOf(other.gameObject.GetComponent<HidingSpot>());
 
