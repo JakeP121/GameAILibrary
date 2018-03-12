@@ -26,13 +26,13 @@ public class MapGrid_GUI : Editor {
             {
                 for (int y = 0; y < grid.getGridDimensions().y; y++)
                 {
-                    if (grid.getTile(x, y).walkable) // If walkable, draw in white, if not, draw in red
+                    if (grid.getTile(new iVector2(x,y)).walkable) // If walkable, draw in white, if not, draw in red
                         Handles.color = Color.white;
                     else
                         Handles.color = Color.red;
 
                     // Draw cube over tile 
-                    Handles.CubeHandleCap(controlID, grid.getTile(x, y).position, Quaternion.LookRotation(Vector3.forward), grid.tileSize, EventType.Repaint);
+                    Handles.CubeHandleCap(controlID, grid.getTile(new iVector2(x,y)).position, Quaternion.LookRotation(Vector3.forward), grid.tileSize, EventType.Repaint);
                 }
             }
         }

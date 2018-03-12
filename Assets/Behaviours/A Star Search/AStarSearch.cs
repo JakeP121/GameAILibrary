@@ -30,7 +30,7 @@ public class AStarSearch : MonoBehaviour {
         {
             for (int y = 0; y < gridDimensions.y; y++)
             {
-                tileData[x, y] = new LocalTile(mapGrid.getTile(x,y)); // Create a new localTile 
+                tileData[x, y] = new LocalTile(mapGrid.getTile(new iVector2(x, y))); // Create a new localTile 
                 tileData[x, y].pathNode = Instantiate(Resources.Load<PathNode>("PathNode")); // Spawn a PathNode prefab object to be associated with the tile
                 tileData[x, y].pathNode.transform.parent = mapGrid.transform; // Assign this PathNode as a child of the MapGrid (To not clog up the heirarchy)
                 tileData[x, y].pathNode.transform.position = tileData[x, y].tile.position; // Move this PathNode to the position of the tile
@@ -87,7 +87,7 @@ public class AStarSearch : MonoBehaviour {
         {
             for (int y = 0; y < gridDimensions.y; y++)
             {
-                Vector3 distance = targetPos - mapGrid.getTile(x,y).position; // Get distance vector between target and current tile
+                Vector3 distance = targetPos - mapGrid.getTile(new iVector2(x, y)).position; // Get distance vector between target and current tile
 
                 tileData[x, y].heuristic = distance.magnitude; // Assign the magnitude of this distance vector to tile's heuristic 
 
@@ -100,7 +100,7 @@ public class AStarSearch : MonoBehaviour {
             }
         }
 
-        return mapGrid.getTile(closestTile.x, closestTile.y); // Return the mapGrid tile with the lowest heuristic
+        return mapGrid.getTile(closestTile); // Return the mapGrid tile with the lowest heuristic
     }
 
     /// <summary>
@@ -193,7 +193,7 @@ public class AStarSearch : MonoBehaviour {
             }
         }
 
-        return mapGrid.getTile(closestNeighbour.x, closestNeighbour.y);
+        return mapGrid.getTile(closestNeighbour);
     }
 
     /// <summary>

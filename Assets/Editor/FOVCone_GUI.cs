@@ -44,10 +44,15 @@ public class FOVCone_GUI : Editor {
 
         for (int i = 0; i < enemies.Count; i++)
         {
-            if (visibleEnemies.Contains(enemies[i]))
-                Handles.color = Color.green;
-            else
+            if (!visibleEnemies.Contains(enemies[i])) // Can't see enemy
                 Handles.color = Color.red;
+            else
+            {
+                float percentageVisible = cone.getTimeVisible(enemies[i]) / cone.timeToSpot;
+                Color visibilityColour = new Color(1 - percentageVisible, percentageVisible, 0);
+
+                Handles.color = visibilityColour;
+            }
 
             Handles.DrawLine(cone.transform.position, enemies[i].transform.position);
         }
