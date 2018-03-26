@@ -12,11 +12,19 @@ public class Sound : MonoBehaviour {
 
     private CapsuleCollider proximity; // A collider to allow the sound to trigger nearby agents.
     private float currentLifeTime = 0.0f; // The time the sound has been going off for in seconds.
-
+    private string identifier;  // The type of sound.
+                                // E.g. If a guard shouts, the identifier could be the name of the guard so nearby guards know who to check on
+                                // or it could simply be shout. Maybe guards react differently to a "shout" than they do to a "knock" (run faster, etc.)
 
     public Sound(float volume)
     {
         this.volume = volume;
+    }
+
+    public Sound(float volume, string identifier)
+    {
+        this.volume = volume;
+        this.identifier = identifier;
     }
 
     // Use this for initialization

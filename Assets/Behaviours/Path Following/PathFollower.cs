@@ -7,12 +7,11 @@ using UnityEngine;
 /// </summary>
 public class PathFollower : MonoBehaviour {
     public Path path; // The path the agent should follow.
-    public float accuracy = 2.0f; // The distance away from a node the agent needs to get to before it moves onto the next one.
+    public float precision = 2.0f; // The distance away from a node the agent needs to get to before it moves onto the next one.
     public bool loop = false; // Should the agent return to the start and begin again after completion.
     public bool loopBackwards = false; // Should the agent turn around and follow the trail backwards after completion.
     public bool startAtClosest = false; // Should the agent start at the closest node, as opposed to the first node.
     public float waitTimeAtNode = 0.0f; // How long the agent will wait at each node before moving on.
-    public bool ableToJumpAhead = false; // If the path overlaps, should the agent jump ahead to the furthest node? (True for chase paths, false for patrol paths)
 
     private int currentNode = 0; // The current node the agent is moving to or stopped at.
     private bool goingForwards = true; // If the agent is following the path forwards.
@@ -45,15 +44,6 @@ public class PathFollower : MonoBehaviour {
         if (path == null || path.nodes.Count == 0)
             return Vector3.zero;
 
-        if (ableToJumpAhead)
-        {
-            // Find closest node to see if we can jump ahead
-            int closestNode = findClosestNode();
-
-            if (closestNode > currentNode || currentNode >= path.nodes.Count || (path.nodes[currentNode].transform.position - path.nodes[closestNode].transform.position).magnitude > accuracy * 2)
-                currentNode = closestNode;
-        }
-
         // If invalid node
         if (currentNode >= path.nodes.Count || (currentNode == -1 && !goingForwards))
         {
@@ -77,7 +67,7 @@ public class PathFollower : MonoBehaviour {
 
 
         // If the node is still too far away, move to it
-        if (direction.magnitude > accuracy)
+        if (direction.magnitude > precision)
         {
             direction.Normalize(); // Return normalised direction vector
             return direction;

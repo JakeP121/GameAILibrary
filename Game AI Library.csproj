@@ -88,9 +88,14 @@
     <Compile Include="Assets\Behaviours\Temp DO_NOT_EXPORT\AdvancedAgent.cs" />
     <Compile Include="Assets\Behaviours\Temp DO_NOT_EXPORT\Agent.cs" />
     <Compile Include="Assets\Behaviours\Temp DO_NOT_EXPORT\Player.cs" />
-    <Compile Include="Assets\Behaviours\Vision\FOVCone.cs" />
     <Compile Include="Assets\Behaviours\Vision\Visibility.cs" />
+    <Compile Include="Assets\Behaviours\Vision\VisionCone.cs" />
     <Compile Include="Assets\Data Types\iVector2.cs" />
+    <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\1) Patrolling\PathFollower_Agent.cs" />
+    <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\2) Vision Cone\Oribiter_AI.cs" />
+    <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\2) Vision Cone\VisionConeChaser_Agent.cs" />
+    <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\2) Vision Cone\VisionCone_Agent.cs" />
+    <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\3) A Star\CubeTranslator.cs" />
     <Compile Include="Assets\Object Types\Hiding Spot\HidingSpot.cs" />
     <Compile Include="Assets\Object Types\Map Grid and Tiles\LocalTile.cs" />
     <Compile Include="Assets\Object Types\Map Grid and Tiles\MapGrid.cs" />

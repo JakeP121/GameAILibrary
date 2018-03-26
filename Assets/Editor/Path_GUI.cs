@@ -17,6 +17,13 @@ public class Path_GUI : Editor {
         Path path = (Path)target; // Path object in game
         float nodeSize = 0.5f;
 
+        // Check path
+        foreach (PathNode node in path.nodes)
+        {
+            if (node == null) // Stop early if all nodes aren't initialised,
+                return;       // stops console getting spammed with errors.
+        }
+
         Handles.color = Color.white; // Set colour to green
 
         if (path.nodes.Count == 0)

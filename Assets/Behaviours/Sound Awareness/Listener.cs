@@ -10,6 +10,7 @@ public class Listener : MonoBehaviour {
     public float attentionSpan = 10.0f; // How long a sound will be remembered by the agent in seconds.
 
     private List<LocalSound> heardSounds = new List<LocalSound>(); // A list of all sounds the agent can remember
+    private bool newSound = false;
 
 	// Use this for initialization
 	void Start () {
@@ -37,7 +38,10 @@ public class Listener : MonoBehaviour {
     public void addSound(Sound sound)
     {
         if (searchHeardSounds(sound) == -1) // If sound not in list
+        {
             heardSounds.Add(new LocalSound(sound, attentionSpan)); // Add it
+            newSound = true;
+        }
     }
 
     /// <summary>

@@ -7,8 +7,9 @@ using UnityEngine;
 /// </summary>
 public class MapTile {
 
-    public Vector3 position; // The real world position of the tile
+    public Vector3 position;
     public bool walkable; // Whether or not the player should be able to walk on this tile
+    public PathNode node;
 
     public MapTile(Vector3 position)
     {

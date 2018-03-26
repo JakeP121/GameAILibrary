@@ -39,7 +39,7 @@ public class Player : Agent {
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-
+            Sound shout = new Sound(10.0f);
         }
     }
 }

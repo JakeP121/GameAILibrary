@@ -26,13 +26,16 @@ public class AStarSearch : MonoBehaviour {
 
         tileData = new LocalTile[gridDimensions.x, gridDimensions.y]; // Allocate size of local tileData array
 
+        GameObject aStarPathNodes = new GameObject("A* Path Nodes");
+        aStarPathNodes.transform.parent = transform;
+
         for (int x = 0; x < gridDimensions.x; x++) // Loop through mapGrid tiles
         {
             for (int y = 0; y < gridDimensions.y; y++)
             {
                 tileData[x, y] = new LocalTile(mapGrid.getTile(new iVector2(x, y))); // Create a new localTile 
                 tileData[x, y].pathNode = Instantiate(Resources.Load<PathNode>("PathNode")); // Spawn a PathNode prefab object to be associated with the tile
-                tileData[x, y].pathNode.transform.parent = mapGrid.transform; // Assign this PathNode as a child of the MapGrid (To not clog up the heirarchy)
+                tileData[x, y].pathNode.transform.parent = aStarPathNodes.transform; // Assign this PathNode as a child of the MapGrid (To not clog up the heirarchy)
                 tileData[x, y].pathNode.transform.position = tileData[x, y].tile.position; // Move this PathNode to the position of the tile
             }
         }

@@ -6,8 +6,8 @@ using UnityEditor;
 /// <summary>
 /// Draws the view radius around an agent and a cone depending on the field of view
 /// </summary>
-[CustomEditor (typeof (FOVCone))]
-public class FOVCone_GUI : Editor {
+[CustomEditor (typeof (VisionCone))]
+public class VisionCone_GUI : Editor {
 
     /// <summary>
     /// Draws the radius of size sightDistance around the agent.
@@ -16,7 +16,7 @@ public class FOVCone_GUI : Editor {
     /// </summary>
     private void OnSceneGUI()
     {
-        FOVCone cone = (FOVCone)target; // Agent's FOV cone in game 
+        VisionCone cone = (VisionCone)target; // Agent's FOV cone in game 
         Handles.color = Color.white; // Change colour to white
 
 
@@ -39,8 +39,8 @@ public class FOVCone_GUI : Editor {
 
 
         // Enemies in proximity
-        List<GameObject> enemies = cone.getNearbyEnemies();
-        List<GameObject> visibleEnemies = cone.getVisibleEnemies();
+        List<GameObject> enemies = cone.getNearbyTargets();
+        List<GameObject> visibleEnemies = cone.getNearbyTargets();
 
         for (int i = 0; i < enemies.Count; i++)
         {
