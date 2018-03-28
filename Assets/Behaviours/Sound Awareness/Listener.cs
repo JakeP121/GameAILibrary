@@ -66,14 +66,8 @@ public class Listener : MonoBehaviour {
     /// <param name="sound">Sound to remove.</param>
     public void forgetSound(LocalSound sound)
     {
-        for (int i = 0; i < heardSounds.Count; i++)
-        {
-            if (heardSounds[i] = sound)
-            {
-                heardSounds.RemoveAt(i);
-                return;
-            }
-        }
+        if (heardSounds.Contains(sound))
+            heardSounds.Remove(sound);
     }
 
     /// <summary>
@@ -106,7 +100,7 @@ public class Listener : MonoBehaviour {
 
         for (int i = 0; i < heardSounds.Count; i++)
         {
-            Vector3 directionVector = heardSounds[i].transform.position - this.transform.position;
+            Vector3 directionVector = heardSounds[i].position - this.transform.position;
             float distance = directionVector.magnitude;
 
             if (distance < shortestDistance)
@@ -115,6 +109,9 @@ public class Listener : MonoBehaviour {
                 closestSoundPos = heardSounds[i].position;
             }
         }
+
+        if (closestSoundPos == heardSounds[heardSounds.Count - 1].position) // If the closest sound is also the newest
+            newSound = false; // Set new sounds to false since the agent will now know about this
 
         return closestSoundPos;
     }
@@ -137,6 +134,33 @@ public class Listener : MonoBehaviour {
             }
         }
 
+        if (loudestSoundPos == heardSounds[heardSounds.Count - 1].position) // If the loudest sound is also the newest
+            newSound = false; // Set new sounds to false since the agent will now know about this
+
         return loudestSoundPos;
+    }
+
+    /// <summary>
+    /// Returns the position of the newest sound
+    /// </summary>
+    /// <returns>Vector3 position of the latest sound in the heardSounds list</returns>
+    public Vector3 ? getNewestSoundPosition()
+    {
+        newSound = false;
+
+        if (heardSounds.Count > 0) // If there are heard sounds
+            return heardSounds[heardSounds.Count - 1].position; // Return the position of the last one
+        else
+            return null;
+    }
+
+
+    /// <summary>
+    /// Returns whether a new sound, which has not yet been returned to the agent has been heard
+    /// </summary>
+    /// <returns>True if there is a new sound, else false</returns>
+    public bool heardNewSound()
+    {
+        return newSound;
     }
 }

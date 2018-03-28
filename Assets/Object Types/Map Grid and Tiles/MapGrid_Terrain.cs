@@ -7,14 +7,13 @@ public class MapGrid_Terrain : MapGrid {
     public float heightThreshold = 1.0f; // The maximum height distance between each corner of a tile to determine if walkable
     public float seaLevel = 0.0f; // Minimum walkable height
 
-
-    private Terrain terrain;
+    public Terrain terrain;
 
     override protected void initialiseTiles()
     {
-        Vector2 tileCount = new Vector2((int)(gridWorldSize.x / tileSize), (int)(gridWorldSize.y / tileSize)); // Find how many tiles fit in the map
+        gridDimensions = new Vector2((int)(gridWorldSize.x / tileSize), (int)(gridWorldSize.y / tileSize)); // Find how many tiles fit in the map
 
-        tiles = new MapTile[(int)tileCount.x, (int)tileCount.y]; // Initialise tiles array
+        tiles = new MapTile[gridDimensions.x, gridDimensions.y]; // Initialise tiles array
 
         // Find bottom left of map
         Vector3 mapBottomLeft = transform.position + (Vector3.left * gridWorldSize.x / 2) + (Vector3.back * gridWorldSize.y / 2);
@@ -31,14 +30,19 @@ public class MapGrid_Terrain : MapGrid {
                 // Create new tile at tileLocation 
                 tiles[x, y] = new MapTile(tileLocation);
 
+                // Spawn path node
+                tiles[x, y].node = Instantiate(Resources.Load<PathNode>("Path Node")); // Spawn a PathNode prefab object to be associated with the tile
+                tiles[x, y].node.transform.parent = transform; // Assign this PathNode as a child of the MapGrid (To not clog up the heirarchy)
+                tiles[x, y].node.transform.position = tileLocation; // Move this PathNode to the position of the tile
             }
         }
+
+        // Check if tiles are walkable
+        updateGrid();
     }
 
     override protected void updateGrid()
     {
-        terrain = Terrain.activeTerrain;
-
         for (int x = 0; x < tiles.GetLength(0); x++) // Loop through nodes
         {
             for (int y = 0; y < tiles.GetLength(1); y++)

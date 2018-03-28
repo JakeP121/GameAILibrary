@@ -9,29 +9,6 @@ public class HidingSpot : MonoBehaviour {
     private List<Vector3> previousPositions = new List<Vector3>();
 
     /// <summary>
-    /// Finds the index of a game object in the occupants list
-    /// </summary>
-    /// <param name="target">The game object to search for</param>
-    /// <returns>The index of target or -1 if target isn't in list</returns>
-    private int getIndexOf(GameObject target)
-    {
-        int i = -1;
-
-        if (!occupants.Contains(target)) // If occupants doesn't contain target, end early
-            return i;
-
-        GameObject currentOccupant = null;
-
-        do // Iterate through occupants until target found
-        {
-            i++;
-            currentOccupant = occupants[i];         
-        } while (i < occupants.Count && currentOccupant != target);
-
-        return i;
-    }
-
-    /// <summary>
     /// Hides a game object in the hiding spot
     /// </summary>
     /// <param name="gameObject">The game object to hide</param>
@@ -55,18 +32,17 @@ public class HidingSpot : MonoBehaviour {
     /// <param name="occupant">Already hidden game object</param>
     public void leave(GameObject occupant)
     {
-        int index = getIndexOf(occupant);
-
-        if (index != -1) // Remove from occupants
+        if (occupants.Contains(occupant)) // If occupants array contains occupant
         {
+            int index = occupants.IndexOf(occupant); // Get the index of occupant
+
             occupant.GetComponent<Hide>().setHidden(false); // Signal that the occupant is now unhidden
             occupant.transform.position = previousPositions[index]; // Move occupant back to it's previous position
 
-            occupants.RemoveAt(index);
+            occupants.RemoveAt(index); // Remove from both arrays
             previousPositions.RemoveAt(index);
-        }
 
-        
+        }
     }
 
     /// <summary>
@@ -102,12 +78,8 @@ public class HidingSpot : MonoBehaviour {
     /// <returns>The target if found, else null</returns>
     public GameObject search(GameObject target)
     {
-        int index = getIndexOf(target);
-
-        if (index != -1)
-        {
+        if (occupants.Contains(target))
             return target;
-        }
         else
             return null;
     }

@@ -96,6 +96,12 @@
     <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\2) Vision Cone\VisionConeChaser_Agent.cs" />
     <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\2) Vision Cone\VisionCone_Agent.cs" />
     <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\3) A Star\CubeTranslator.cs" />
+    <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\4) Hiding Spots\Chaser_AI.cs" />
+    <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\4) Hiding Spots\Hider_AI.cs" />
+    <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\5) Audio Sensing\Listener_AI.cs" />
+    <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\5) Audio Sensing\SoundEmitter.cs" />
+    <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\6) Dynamic Path Creation\PathCreator_AI.cs" />
+    <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\6) Dynamic Path Creation\Snow.cs" />
     <Compile Include="Assets\Object Types\Hiding Spot\HidingSpot.cs" />
     <Compile Include="Assets\Object Types\Map Grid and Tiles\LocalTile.cs" />
     <Compile Include="Assets\Object Types\Map Grid and Tiles\MapGrid.cs" />

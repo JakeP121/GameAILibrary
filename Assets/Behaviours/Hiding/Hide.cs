@@ -19,13 +19,26 @@ public class Hide : MonoBehaviour {
 	}
 	
     /// <summary>
-    /// Enters the closest hiding spot
+    /// Enters the closest hiding spot if there is one in range
     /// </summary>
     public void hide()
     {
-        HidingSpot hidingSpot = findClosestSpot();
+        HidingSpot hidingSpot = getClosestHidingSpot();
 
         if (hidingSpot != null)
+        {
+            hidingSpot.hide(this.gameObject);
+            currentHidingSpot = hidingSpot;
+        }
+    }
+
+    /// <summary>
+    /// Enters the specified hiding spot if in range
+    /// </summary>
+    /// <param name="hidingSpot">The hiding spot to hide in</param>
+    public void hide(HidingSpot hidingSpot)
+    {
+        if (nearbyHidingSpots.Contains(hidingSpot))
         {
             hidingSpot.hide(this.gameObject);
             currentHidingSpot = hidingSpot;
@@ -50,8 +63,9 @@ public class Hide : MonoBehaviour {
     /// <param name="other">The colliding object</param>
     private void OnTriggerEnter(Collider other)
     {
-        if (other.transform.GetComponent("HidingSpot") != null)
-            nearbyHidingSpots.Add(other.gameObject.GetComponent<HidingSpot>());
+        HidingSpot hidingSpot = other.transform.GetComponent<HidingSpot>();
+        if (hidingSpot != null)
+            nearbyHidingSpots.Add(hidingSpot);
     }
 
     /// <summary>
@@ -60,12 +74,12 @@ public class Hide : MonoBehaviour {
     /// <param name="other">The colliding object</param>
     private void OnTriggerExit(Collider other)
     {
-        if (other.transform.GetComponent("HidingSpot") != null)
-        {
-            int index = getIndexOf(other.gameObject.GetComponent<HidingSpot>());
+        HidingSpot hidingSpot = other.transform.GetComponent<HidingSpot>();
 
-            if (index != -1)
-                nearbyHidingSpots.RemoveAt(index);
+        if (hidingSpot != null)
+        {
+            if (nearbyHidingSpots.Contains(hidingSpot))
+                nearbyHidingSpots.Remove(hidingSpot);
         }
     }
 
@@ -93,10 +107,10 @@ public class Hide : MonoBehaviour {
     }
 
     /// <summary>
-    /// Finds the closest hiding spot
+    /// Finds the closest hiding spot of nearby hiding spots
     /// </summary>
     /// <returns>The closest hiding spot to this agent</returns>
-    public HidingSpot findClosestSpot()
+    public HidingSpot getClosestHidingSpot()
     {
         float closestDistance = Mathf.Infinity;
         HidingSpot closestHidingSpot = null;

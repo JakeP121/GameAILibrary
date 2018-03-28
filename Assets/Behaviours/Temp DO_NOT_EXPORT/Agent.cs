@@ -21,6 +21,7 @@ public class Agent : MonoBehaviour {
     /// </summary>
     private void move()
     {
+        directionVector.Normalize();
         directionVector *= maxSpeed * Time.deltaTime; // Increases direction to max speed but limits with delta time.
 
         transform.Translate(directionVector, Space.World); // Move 

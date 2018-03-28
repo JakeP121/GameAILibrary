@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Contains a list of PathNodes
 /// </summary>
-public class Path : MonoBehaviour {
-
+public class Path : MonoBehaviour
+{
     public List<PathNode> nodes = new List<PathNode>();
 }

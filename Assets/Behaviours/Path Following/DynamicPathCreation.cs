@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DynamicPathCreation : MonoBehaviour {
+public class DynamicPathCreation : MonoBehaviour
+{
 
     public float frequency = 2.0f;
     public float maxNodeLifeTime = 0.0f;
@@ -13,20 +14,22 @@ public class DynamicPathCreation : MonoBehaviour {
     private Path path;
     private List<float> lifeTimeCounter = new List<float>();
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         path = Instantiate(Resources.Load<Path>("Path")); // Create a path attached to this game object
         path.transform.position = Vector3.zero;
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         increaseNodeTimeCount();
 
         removeOldNodes();
 
         addNewNode();
-	}
+    }
 
     private void increaseNodeTimeCount()
     {
@@ -60,12 +63,12 @@ public class DynamicPathCreation : MonoBehaviour {
             float distance = (lastNodePos - newNodePos).magnitude;
 
             if (distance <= proximityThreshold)
-                tooClose = true; 
+                tooClose = true;
         }
 
         if (timeSinceLastNode > frequency && !tooClose)
         {
-            PathNode newNode = Instantiate(Resources.Load<PathNode>("PathNode")); // Spawn a PathNode prefab object
+            PathNode newNode = Instantiate(Resources.Load<PathNode>("Path Node")); // Spawn a PathNode prefab object
             lifeTimeCounter.Add(0.0f);
 
             newNode.transform.parent = path.transform; // Assign path as parent of PathNode

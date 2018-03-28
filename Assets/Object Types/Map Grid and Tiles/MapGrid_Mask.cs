@@ -35,7 +35,7 @@ public class MapGrid_Mask : MapGrid {
 
 
                 // Spawn path node
-                tiles[x, y].node = Instantiate(Resources.Load<PathNode>("PathNode")); // Spawn a PathNode prefab object to be associated with the tile
+                tiles[x, y].node = Instantiate(Resources.Load<PathNode>("Path Node")); // Spawn a PathNode prefab object to be associated with the tile
                 tiles[x, y].node.transform.parent = transform; // Assign this PathNode as a child of the MapGrid (To not clog up the heirarchy)
                 tiles[x, y].node.transform.position = tileLocation; // Move this PathNode to the position of the tile
             }
