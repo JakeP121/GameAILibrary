@@ -46,6 +46,7 @@ public class DynamicPathCreation : MonoBehaviour
             if (lifeTimeCounter[0] > maxNodeLifeTime) // We'll only need to check the first value since thats the oldest
             {
                 lifeTimeCounter.RemoveAt(0);
+                Destroy(path.nodes[0].gameObject);
                 path.nodes.RemoveAt(0);
             }
         }
