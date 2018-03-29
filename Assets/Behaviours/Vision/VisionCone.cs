@@ -58,7 +58,7 @@ public class VisionCone : MonoBehaviour
 
                         Visibility vis = nearbyTargets[i].GetComponent<Visibility>();
 
-                        if (vis != null)
+                        if (vis != null && !ignoreVisibilityValue)
                             sightTime.Add((vis.getVisiblity() * Time.deltaTime) / 100);
                         else
                             sightTime.Add(Time.deltaTime);
@@ -201,7 +201,6 @@ public class VisionCone : MonoBehaviour
     {
         return visibleTargets;
     }
-
 
     /// <summary>
     /// Removes target from visible targets and sight time arrays

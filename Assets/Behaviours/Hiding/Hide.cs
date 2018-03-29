@@ -84,29 +84,6 @@ public class Hide : MonoBehaviour {
     }
 
     /// <summary>
-    /// Finds the index of a HidingSpot object in the nearbyHidingSpots list
-    /// </summary>
-    /// <param name="hidingSpot">The hiding spot to search for</param>
-    /// <returns>The index if found, else -1</returns>
-    private int getIndexOf(HidingSpot hidingSpot)
-    {
-        // If nearbyHidingSpots does not contain hidingSpot
-        if (!nearbyHidingSpots.Contains(hidingSpot))
-            return -1;
-
-        int i = 0;
-
-        HidingSpot currentHidingSpot;
-
-        do
-        {
-            currentHidingSpot = nearbyHidingSpots[i];
-        } while (i < nearbyHidingSpots.Count && currentHidingSpot != hidingSpot);
-
-        return i;
-    }
-
-    /// <summary>
     /// Finds the closest hiding spot of nearby hiding spots
     /// </summary>
     /// <returns>The closest hiding spot to this agent</returns>

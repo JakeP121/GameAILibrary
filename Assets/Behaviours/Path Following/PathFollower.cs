@@ -30,11 +30,6 @@ public class PathFollower : MonoBehaviour {
             currentNode = findClosestNode(); // Set the current node to the closest one
     }
 
-    private void Update()
-    {
-
-    }
-
     /// <summary>
     /// Points to the current node in the path.
     /// </summary>

@@ -154,7 +154,6 @@ public class Listener : MonoBehaviour {
             return null;
     }
 
-
     /// <summary>
     /// Returns whether a new sound, which has not yet been returned to the agent has been heard
     /// </summary>

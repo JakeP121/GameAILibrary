@@ -21,9 +21,10 @@ public class LocalSound {
         timeLeft = attentionSpan;
     }
 
-    public LocalSound(Vector3 location, float attentionSpan)
+    public LocalSound(Vector3 location, float attentionSpan, string identifier)
     {
         position = location;
         timeLeft = attentionSpan;
+        this.identifier = identifier;
     }
 }
