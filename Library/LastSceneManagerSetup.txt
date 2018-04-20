@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Tasks/New Scene.unity
-  isLoaded: 0
-  isActive: 0
+- path: Assets/Example Scenes DO_NOT_EXPORT/5) Audio Sensing/Audio Sensing.unity
+  isLoaded: 1
+  isActive: 1
