@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Example Scenes DO_NOT_EXPORT/5) Audio Sensing/Audio Sensing.unity
+- path: Assets/Example Scenes DO_NOT_EXPORT/3) A Star/A Star - Terrain.unity
   isLoaded: 1
   isActive: 1
