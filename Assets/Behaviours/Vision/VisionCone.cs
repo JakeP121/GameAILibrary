@@ -79,10 +79,16 @@ public class VisionCone : MonoBehaviour
                     }
                 }
                 else // obscured
+                {
+                    if (visibleTargets.Contains(nearbyTargets[i]))
                     unsee(nearbyTargets[i]);
+                }
             }
             else // Not in field of view
-                unsee(nearbyTargets[i]);
+            {
+                if (visibleTargets.Contains(nearbyTargets[i]))
+                    unsee(nearbyTargets[i]);
+            }
         }
     }
 
@@ -145,14 +151,14 @@ public class VisionCone : MonoBehaviour
         float shortestDistance = Mathf.Infinity;
         GameObject closestTarget = null;
 
-        for (int i = 0; i < visibleTargets.Count; i++)
+        for (int i = 0; i < visibleTargets.Count; i++) // Iterate through visible targets
         {
-            Vector3 directionVector = visibleTargets[i].transform.position - this.transform.position;
+            Vector3 directionVector = visibleTargets[i].transform.position - this.transform.position; // Calculate distance
             float distance = directionVector.magnitude;
 
-            if (distance < shortestDistance)
+            if (distance < shortestDistance) // If the current distance is shorter than the shortest distance
             {
-                shortestDistance = distance;
+                shortestDistance = distance; // Remember it
                 closestTarget = nearbyTargets[i];
             }
         }
@@ -166,18 +172,15 @@ public class VisionCone : MonoBehaviour
     /// <returns>Most visible gameobject or null if no visible targets.</returns>
     public GameObject getMostVisibleTarget()
     {
-        if (visibleTargets.Count == 0)
-            return null;
+        GameObject mostVisible = null;
+        float longestSighting = 0;
 
-        GameObject mostVisible = visibleTargets[0];
-        float maxVisibility = sightTime[0];
-
-        for (int i = 1; i < visibleTargets.Count; i++)
+        for (int i = 0; i < visibleTargets.Count; i++) // Iterate through visible targets
         {
-            if (sightTime[i] > maxVisibility)
+            if (sightTime[i] > longestSighting) // If the current target's sightTime is greater than the current longest sighting
             {
-                mostVisible = visibleTargets[i];
-                maxVisibility = sightTime[i];
+                mostVisible = visibleTargets[i]; // Remember it
+                longestSighting = sightTime[i];
             }
         }
 
@@ -208,9 +211,9 @@ public class VisionCone : MonoBehaviour
     /// <param name="target">The gameobject to remove</param>
     private void unsee(GameObject target)
     {
-        if (visibleTargets.Contains(target))
+        if (visibleTargets.Contains(target)) // If the visibleTargets list contains target
         {
-            int index = visibleTargets.IndexOf(target);
+            int index = visibleTargets.IndexOf(target); // Find the index and remove it 
             visibleTargets.RemoveAt(index);
             sightTime.RemoveAt(index);
         }

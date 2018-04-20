@@ -5,9 +5,9 @@ using UnityEngine;
 public class DynamicPathCreation : MonoBehaviour
 {
 
-    public float frequency = 2.0f;
-    public float maxNodeLifeTime = 0.0f;
-    public float proximityThreshold = 2.0f;
+    public float frequency = 0.2f;
+    public float maxNodeLifeTime = 3.0f;
+    public float proximityThreshold = 0.2f;
 
     private float timeSinceLastNode = 0.0f;
 
@@ -19,6 +19,7 @@ public class DynamicPathCreation : MonoBehaviour
     {
         path = Instantiate(Resources.Load<Path>("Path")); // Create a path attached to this game object
         path.transform.position = Vector3.zero;
+        path.transform.name = this.transform.name + "'s Trail";
     }
 
     // Update is called once per frame

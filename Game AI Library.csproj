@@ -90,7 +90,7 @@
     <Compile Include="Assets\Behaviours\Vision\VisionCone.cs" />
     <Compile Include="Assets\Data Types\iVector2.cs" />
     <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\1) Patrolling\PathFollower_Agent.cs" />
-    <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\2) Vision Cone\Oribiter_AI.cs" />
+    <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\2) Vision Cone\Orbiter_AI.cs" />
     <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\2) Vision Cone\VisionConeChaser_Agent.cs" />
     <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\2) Vision Cone\VisionCone_Agent.cs" />
     <Compile Include="Assets\Example Scenes DO_NOT_EXPORT\3) A Star\CubeTranslator.cs" />

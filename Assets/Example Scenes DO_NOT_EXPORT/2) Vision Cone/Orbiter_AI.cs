@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Oribiter_AI : MonoBehaviour {
+public class Orbiter_AI : MonoBehaviour {
 
     public GameObject target;
     public float speed = 20.0f;
