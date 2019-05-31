@@ -9,6 +9,7 @@ using UnityEditor;
 public class VisionCone : MonoBehaviour
 {
     public List<string> targetTags; // The tag assigned to any possible target this script should track.
+    public List<string> ignoreTags; // The tags this vision cone can see through  (e.g. small objects like bullets)
     public float viewDistance = 10.0f; // The furthest distance the agent can detect targets.
     [Range(0, 360)]
     public float FOV = 100.0f; // The angle the agent can see at. 
@@ -26,8 +27,11 @@ public class VisionCone : MonoBehaviour
     private void Start()
     {
         proximity = gameObject.AddComponent<CapsuleCollider>(); // Create new collider
-        proximity.radius = viewDistance; // Set radius to view distance
         proximity.isTrigger = true; // Set to trigger
+
+        // Account for gameobject scale
+        float scale = (transform.localScale.x + transform.localScale.y + transform.localScale.z) / 3.0f;
+        proximity.radius = (1.0f / scale) * viewDistance;
     }
 
     private void Update()
@@ -40,6 +44,8 @@ public class VisionCone : MonoBehaviour
     /// </summary>
     private void checkSight()
     {
+        validateObjects();
+
         for (int i = 0; i < nearbyTargets.Count; i++) // Loop through nearby agents
         {
             Vector3 direction = nearbyTargets[i].transform.position - transform.position; // Direction vector between agent and target
@@ -48,47 +54,52 @@ public class VisionCone : MonoBehaviour
             if (angle <= FOV / 2) // Is target in view angle.
             {
                 RaycastHit hitInfo = new RaycastHit(); // Hit information ready for raycast
-                Physics.Raycast(transform.position, direction, out hitInfo, viewDistance); // Send raycast from this location, to target's location to see if it will hit.
+                Physics.Raycast(transform.position, direction, out hitInfo, viewDistance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore); // Send raycast from this location, to target's location to see if it will hit.
 
-                if (hitInfo.collider && targetTags.Contains(hitInfo.collider.tag)) // If collider was hit and it has valid tag
+                if (hitInfo.collider) // If collider was hit
                 {
-                    if (!visibleTargets.Contains(nearbyTargets[i]))
+                    while (hitInfo.collider != null && (hitInfo.collider.gameObject == this.gameObject || isAChildOf(hitInfo.collider.gameObject, this.gameObject) || ignoreTags.Contains(hitInfo.collider.gameObject.tag)))
+                        Physics.Raycast(hitInfo.point + (direction * 0.1f), direction, out hitInfo, viewDistance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+
+                    if (hitInfo.collider == null)
+                        return;
+
+                    if (hitInfo.collider.gameObject == nearbyTargets[i] || isAChildOf(hitInfo.collider.gameObject, nearbyTargets[i])) // Collider is target we were aiming for
                     {
-                        visibleTargets.Add(hitInfo.collider.gameObject); // Add target to visible target array
+                        if (!visibleTargets.Contains(nearbyTargets[i]))
+                        {
+                            visibleTargets.Add(nearbyTargets[i]); // Add target to visible target array
 
-                        Visibility vis = nearbyTargets[i].GetComponent<Visibility>();
+                            Visibility vis = nearbyTargets[i].GetComponent<Visibility>();
 
-                        if (vis != null && !ignoreVisibilityValue)
-                            sightTime.Add((vis.getVisiblity() * Time.deltaTime) / 100);
+                            if (vis != null && !ignoreVisibilityValue)
+                                sightTime.Add((vis.getVisiblity() * Time.deltaTime) / 100);
+                            else
+                                sightTime.Add(Time.deltaTime);
+                        }
                         else
-                            sightTime.Add(Time.deltaTime);
+                        {
+                            int index = visibleTargets.IndexOf(nearbyTargets[i]);
+
+                            Visibility vis = visibleTargets[index].GetComponent<Visibility>();
+
+                            if (vis != null)
+                                sightTime[index] += (vis.getVisiblity() * Time.deltaTime) / 100;
+                            else
+                                sightTime[index] += Time.deltaTime;
+
+                            if (sightTime[index] > timeToSpot)
+                                sightTime[index] = timeToSpot;
+                        }
                     }
-                    else
-                    {
-                        int index = visibleTargets.IndexOf(nearbyTargets[i]);
-
-                        Visibility vis = visibleTargets[index].GetComponent<Visibility>();
-
-                        if (vis != null)
-                            sightTime[index] += (vis.getVisiblity() * Time.deltaTime) / 100;
-                        else
-                            sightTime[index] += Time.deltaTime;
-
-                        if (sightTime[index] > timeToSpot)
-                            sightTime[index] = timeToSpot;
-                    }
+                    else // Obscured
+                        unsee(nearbyTargets[i]);
                 }
-                else // obscured
-                {
-                    if (visibleTargets.Contains(nearbyTargets[i]))
+                else // Out of range
                     unsee(nearbyTargets[i]);
-                }
             }
             else // Not in field of view
-            {
-                if (visibleTargets.Contains(nearbyTargets[i]))
-                    unsee(nearbyTargets[i]);
-            }
+                unsee(nearbyTargets[i]);
         }
     }
 
@@ -98,11 +109,16 @@ public class VisionCone : MonoBehaviour
     /// <param name="other">Colliding game object</param>
     private void OnTriggerEnter(Collider other)
     {
-        if (targetTags.Contains(other.gameObject.tag))
-            nearbyTargets.Add(other.gameObject);
+        if (targetTags.Contains(other.transform.tag))
+        {
+            for (int i = 0; i < nearbyTargets.Count; i++)
+            {
+                if (isAChildOf(other.gameObject, nearbyTargets[i]) || isAChildOf(nearbyTargets[i], other.gameObject))
+                    return;
+            }
 
-        //if (other.CompareTag(targetTag)) // If target is in proximity
-        //    nearbyTargets.Add(other.gameObject); // Add it to nearbyTargets list
+            nearbyTargets.Add(other.gameObject);
+        }
     }
 
     /// <summary>
@@ -111,7 +127,11 @@ public class VisionCone : MonoBehaviour
     /// <param name="other">Agent that left the trigger area</param>
     private void OnTriggerExit(Collider other)
     {
-        if (targetTags.Contains(other.gameObject.tag)) // If the target's tag is in the targetTag list
+        // If still within view distance, different trigger exitted
+        if ((transform.position - other.transform.position).magnitude < viewDistance)
+            return;
+
+        if (targetTags.Contains(other.transform.tag)) // If the target's tag is in the targetTag list
         {
             if (nearbyTargets.Contains(other.gameObject)) // If the target is in the nearbyTargets array, remove it
                 nearbyTargets.Remove(other.gameObject);
@@ -132,6 +152,8 @@ public class VisionCone : MonoBehaviour
     /// <returns>The time the target has been in this agent's view or -1 if not in view</returns>
     public float getTimeVisible(GameObject target)
     {
+        validateObjects();
+
         if (visibleTargets.Contains(target))
         {
             int index = visibleTargets.IndexOf(target);
@@ -148,6 +170,8 @@ public class VisionCone : MonoBehaviour
     /// <returns>closest visible GameObject or null if no visible target</returns>
     public GameObject getClosestVisibleTarget()
     {
+        validateObjects();
+
         float shortestDistance = Mathf.Infinity;
         GameObject closestTarget = null;
 
@@ -172,6 +196,8 @@ public class VisionCone : MonoBehaviour
     /// <returns>Most visible gameobject or null if no visible targets.</returns>
     public GameObject getMostVisibleTarget()
     {
+        validateObjects();
+
         GameObject mostVisible = null;
         float longestSighting = 0;
 
@@ -193,6 +219,8 @@ public class VisionCone : MonoBehaviour
     /// <returns>A list of nearby enemy GameObjects</returns>
     public List<GameObject> getNearbyTargets()
     {
+        validateObjects();
+
         return nearbyTargets;
     }
 
@@ -202,6 +230,8 @@ public class VisionCone : MonoBehaviour
     /// <returns>A list of visible GameObjects</returns>
     public List<GameObject> getVisibleTargets()
     {
+        validateObjects();
+
         return visibleTargets;
     }
 
@@ -225,9 +255,60 @@ public class VisionCone : MonoBehaviour
     /// <returns>True if there is an unobstructed target in field of view, else false</returns>
     public bool hasVisibleTargets()
     {
+        validateObjects();
+
         if (visibleTargets.Count > 0)
             return true;
         else
             return false;
+    }
+
+    /// <summary>
+    /// Checks to see if an object is a child of another
+    /// </summary>
+    /// <param name="potChild">Potential child object</param>
+    /// <param name="potParent">Potential parent object</param>
+    /// <returns>True if </returns>
+    private bool isAChildOf(GameObject potChild, GameObject potParent)
+    {
+        bool isChild = false;
+
+        if (potChild == potParent)
+            return true;
+
+        if (potChild.transform.parent != null)
+            return isAChildOf(potChild.transform.parent.gameObject, potParent);
+
+        return isChild;
+    }
+
+    /// <summary>
+    /// Clears nearbyObjects list of destroyed objects
+    /// </summary>
+    private void validateObjects()
+    {
+        List<int> nullIndices = new List<int>();
+
+        // Find destroyed
+        for (int i = 0; i < nearbyTargets.Count; i++)
+        {
+            if (nearbyTargets[i] == null)
+                nullIndices.Add(i);
+        }
+
+        // Remove destroyed
+        for (int i = nullIndices.Count - 1; i >= 0; i--)
+            nearbyTargets.RemoveAt(nullIndices[i]);
+
+        nullIndices.Clear();
+
+        for (int i = 0; i < visibleTargets.Count; i++)
+        {
+            if (visibleTargets[i] == null)
+                nullIndices.Add(i);
+        }
+
+        for (int i = nullIndices.Count - 1; i >= 0; i--)
+            visibleTargets.RemoveAt(nullIndices[i]);
     }
 }
